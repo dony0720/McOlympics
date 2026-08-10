@@ -1,5 +1,70 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand: #03b26c;
+  --color-brand-dark: #02a05f;
+  --color-brand-soft: #e6f7ef;
+  --color-brand-soft-dark: #c3ecd8;
+
+  --color-ink: #191f28;
+  --color-ink-soft: #333d4b;
+
+  --color-muted: #8b95a1;
+  --color-muted-2: #6b7684;
+  --color-muted-3: #4e5968;
+  --color-muted-4: #b0b8c1;
+
+  --color-line: #f2f4f6;
+  --color-line-dark: #e5e8eb;
+  --color-surface: #f9fafb;
+
+  --color-danger: #f04452;
+  --color-danger-soft: #ffeaec;
+
+  --color-warn: #fe9800;
+  --color-warn-dark: #e07800;
+  --color-warn-soft: #fff4e6;
+
+  --color-info: #3182f6;
+  --color-info-soft: #e8f3ff;
+
+  --color-gold: #ffd158;
+  --color-gold-dark: #f5c400;
+
+  --color-violet: #8b5cf6;
+  --color-violet-soft: #f3edff;
+
+  --color-silver: #c4ccd6;
+  --color-bronze: #e0965a;
+  --color-bronze-light: #f5d9bf;
+
+  --color-app: #dfe3e8;
+  --color-panel-dark: #20262f;
+  --color-panel-divider: #2b323c;
+
+  --color-roulette-lilac: #d9c9ff;
+  --color-roulette-muted: #8a7bb0;
+  --color-roulette-reel: #120a24;
+
+  --animate-screen-in: screenIn 0.25s ease;
+  --animate-pop: pop 0.4s ease;
+  --animate-toast-up: toastUp 0.25s ease;
+}
+
+@keyframes screenIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pop {
+  0% { transform: scale(.9); opacity: 0; }
+  60% { transform: scale(1.03); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes toastUp {
+  from { opacity: 0; transform: translate(-50%, 12px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
 @layer base {
   * {
     box-sizing: border-box;
