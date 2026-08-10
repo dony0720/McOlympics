@@ -18,8 +18,8 @@
 | 5   | ✅ 완료   | `feat: 점수판 상태 머신을 React 훅으로 포팅` `a8647a5`   | `src/hooks/useScoreboard.ts`                                                                                                                  |
 | 6   | ✅ 완료   | `feat: 로그인 및 담당자 PIN 페이지 추가` `2e59e9d`       | `src/pages/LoginPage.tsx`, `src/pages/StaffPinPage.tsx`                                                                                       |
 | 7   | ✅ 완료   | `feat: 팀 및 담당자 플로우 페이지 추가` `e4dc7c2`        | `src/pages/TeamPage.tsx`, `src/pages/manager/ManagerGamesPage.tsx`, `ManagerMatchesPage.tsx`, `ManagerMatchPage.tsx`                          |
-| 8   | 🟨 진행중 | `feat: 관리자 대시보드 및 4개 탭 추가`                   | `src/pages/admin/AdminPage.tsx`, `ScoresTab.tsx`, `TeamsTab.tsx`, `GamesTab.tsx`, `SettingsTab.tsx`                                           |
-| 9   | ⬜ 대기   | `feat: 포디움 및 전체 순위 결과 페이지 추가`             | `src/pages/ResultsPage.tsx`                                                                                                                   |
+| 8   | ✅ 완료   | `feat: 관리자 대시보드 및 점수/팀/게임/설정 탭 추가` `3fd96fe` | `src/pages/admin/AdminPage.tsx`, `ScoresTab.tsx`, `TeamsTab.tsx`, `GamesTab.tsx`, `SettingsTab.tsx`                                           |
+| 9   | 🟨 진행중 | `feat: 포디움 및 전체 순위 결과 페이지 추가`             | `src/pages/ResultsPage.tsx`                                                                                                                   |
 | 10  | ⬜ 대기   | `feat: 아이템 상점, 룰렛, 스왑, 순위 페이지 추가`         | `src/pages/shop/ShopPage.tsx`, `RoulettePage.tsx`, `SwapPage.tsx`, `StandingsPage.tsx`                                                        |
 | 11  | ⬜ 대기   | `feat: 현황판 및 일정 페이지 추가`                       | `src/pages/StatusPage.tsx`, `src/pages/SchedulePage.tsx`                                                                                      |
 | 12  | ⬜ 대기   | `feat: 전체 점수판 앱 통합 및 스모크 테스트 추가`         | `src/App.tsx`, `src/App.test.tsx`, `vitest.config.ts`                                                                                         |
