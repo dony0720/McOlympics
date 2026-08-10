@@ -8,21 +8,21 @@
 
 ## 진행 상황
 
-| #   | 상태    | 커밋 메시지                                                          | 핵심 파일                                                                                                                                     |
-| --- | ------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0   | ⬜ 대기 | `chore: initialize repo with vite scaffold, plan doc, and CLAUDE.md` | (전체 초기 스캐폴드), `CLAUDE.md`, `ROADMAP.md`, `docs/**`                                                                                    |
-| 1   | ⬜ 대기 | `feat: add pure scoring/matchup logic with unit tests`               | `src/lib/scoring.ts`, `src/lib/scoring.test.ts`, `package.json`                                                                               |
-| 2   | ⬜ 대기 | `feat: add scoreboard state/view types and initial state`            | `src/types/state.ts`, `src/types/view.ts`, `src/types/index.ts`, `src/data/initialState.ts`                                                   |
-| 3   | ⬜ 대기 | `feat: add Tailwind design tokens and dc.html conversion guide`      | `src/index.css`, `design-reference/CONVERSION_GUIDE.md`                                                                                       |
-| 4   | ⬜ 대기 | `feat: add shared scoreboard UI primitives`                          | `src/components/ui/PageShell.tsx`, `TeamAvatar.tsx`, `BackButton.tsx`, `Buttons.tsx`, `ScoreStepper.tsx`, `SegmentedControl.tsx`, `Toast.tsx` |
-| 5   | ⬜ 대기 | `feat: port scoreboard state machine to a React hook`                | `src/hooks/useScoreboard.ts`                                                                                                                  |
-| 6   | ⬜ 대기 | `feat: add login and staff PIN pages`                                | `src/pages/LoginPage.tsx`, `src/pages/StaffPinPage.tsx`                                                                                       |
-| 7   | ⬜ 대기 | `feat: add team and manager flow pages`                              | `src/pages/TeamPage.tsx`, `src/pages/manager/ManagerGamesPage.tsx`, `ManagerMatchesPage.tsx`, `ManagerMatchPage.tsx`                          |
-| 8   | ⬜ 대기 | `feat: add admin dashboard with scores/teams/games/settings tabs`    | `src/pages/admin/AdminPage.tsx`, `ScoresTab.tsx`, `TeamsTab.tsx`, `GamesTab.tsx`, `SettingsTab.tsx`                                           |
-| 9   | ⬜ 대기 | `feat: add results page with podium and full ranking`                | `src/pages/ResultsPage.tsx`                                                                                                                   |
-| 10  | ⬜ 대기 | `feat: add item shop, roulette, swap, and standings pages`           | `src/pages/shop/ShopPage.tsx`, `RoulettePage.tsx`, `SwapPage.tsx`, `StandingsPage.tsx`                                                        |
-| 11  | ⬜ 대기 | `feat: add status board and schedule pages`                          | `src/pages/StatusPage.tsx`, `src/pages/SchedulePage.tsx`                                                                                      |
-| 12  | ⬜ 대기 | `feat: wire up full scoreboard app and add integration smoke tests`  | `src/App.tsx`, `src/App.test.tsx`, `vitest.config.ts`                                                                                         |
+| #   | 상태      | 커밋 메시지                                            | 핵심 파일                                                                                                                                     |
+| --- | --------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0   | ✅ 완료   | `chore: 저장소 초기화` `2893d98`                       | (전체 초기 스캐폴드), `CLAUDE.md`, `docs/**`                                                                                                  |
+| 1   | ✅ 완료   | `feat: 순수 채점/대진 로직 및 단위 테스트 추가` `90a9991` | `src/lib/scoring.ts`, `src/lib/scoring.test.ts`, `package.json`                                                                               |
+| 2   | 🟨 진행중 | `feat: 점수판 상태/뷰 타입 및 초기 상태 추가`             | `src/types/state.ts`, `src/types/view.ts`, `src/types/index.ts`, `src/data/initialState.ts`                                                   |
+| 3   | ⬜ 대기   | `feat: Tailwind 디자인 토큰 및 변환 가이드 추가`         | `src/index.css`, `design-reference/CONVERSION_GUIDE.md`                                                                                       |
+| 4   | ⬜ 대기   | `feat: 공용 UI 프리미티브 컴포넌트 추가`                 | `src/components/ui/PageShell.tsx`, `TeamAvatar.tsx`, `BackButton.tsx`, `Buttons.tsx`, `ScoreStepper.tsx`, `SegmentedControl.tsx`, `Toast.tsx` |
+| 5   | ⬜ 대기   | `feat: 점수판 상태 머신을 React 훅으로 포팅`             | `src/hooks/useScoreboard.ts`                                                                                                                  |
+| 6   | ⬜ 대기   | `feat: 로그인 및 담당자 PIN 페이지 추가`                 | `src/pages/LoginPage.tsx`, `src/pages/StaffPinPage.tsx`                                                                                       |
+| 7   | ⬜ 대기   | `feat: 팀 및 담당자 플로우 페이지 추가`                  | `src/pages/TeamPage.tsx`, `src/pages/manager/ManagerGamesPage.tsx`, `ManagerMatchesPage.tsx`, `ManagerMatchPage.tsx`                          |
+| 8   | ⬜ 대기   | `feat: 관리자 대시보드 및 4개 탭 추가`                   | `src/pages/admin/AdminPage.tsx`, `ScoresTab.tsx`, `TeamsTab.tsx`, `GamesTab.tsx`, `SettingsTab.tsx`                                           |
+| 9   | ⬜ 대기   | `feat: 포디움 및 전체 순위 결과 페이지 추가`             | `src/pages/ResultsPage.tsx`                                                                                                                   |
+| 10  | ⬜ 대기   | `feat: 아이템 상점, 룰렛, 스왑, 순위 페이지 추가`         | `src/pages/shop/ShopPage.tsx`, `RoulettePage.tsx`, `SwapPage.tsx`, `StandingsPage.tsx`                                                        |
+| 11  | ⬜ 대기   | `feat: 현황판 및 일정 페이지 추가`                       | `src/pages/StatusPage.tsx`, `src/pages/SchedulePage.tsx`                                                                                      |
+| 12  | ⬜ 대기   | `feat: 전체 점수판 앱 통합 및 스모크 테스트 추가`         | `src/App.tsx`, `src/App.test.tsx`, `vitest.config.ts`                                                                                         |
 
 ## 커밋별 상세
 
