@@ -16,8 +16,8 @@
 | 3   | ✅ 완료   | `feat: Tailwind 디자인 토큰 및 변환 가이드 추가` `5739fe1` | `src/index.css`, `design-reference/CONVERSION_GUIDE.md`                                                                                       |
 | 4   | ✅ 완료   | `feat: 공용 UI 프리미티브 컴포넌트 추가` `9f18625`        | `src/components/ui/PageShell.tsx`, `TeamAvatar.tsx`, `BackButton.tsx`, `Buttons.tsx`, `ScoreStepper.tsx`, `SegmentedControl.tsx`, `Toast.tsx` |
 | 5   | ✅ 완료   | `feat: 점수판 상태 머신을 React 훅으로 포팅` `a8647a5`   | `src/hooks/useScoreboard.ts`                                                                                                                  |
-| 6   | 🟨 진행중 | `feat: 로그인 및 담당자 PIN 페이지 추가`                 | `src/pages/LoginPage.tsx`, `src/pages/StaffPinPage.tsx`                                                                                       |
-| 7   | ⬜ 대기   | `feat: 팀 및 담당자 플로우 페이지 추가`                  | `src/pages/TeamPage.tsx`, `src/pages/manager/ManagerGamesPage.tsx`, `ManagerMatchesPage.tsx`, `ManagerMatchPage.tsx`                          |
+| 6   | ✅ 완료   | `feat: 로그인 및 담당자 PIN 페이지 추가` `2e59e9d`       | `src/pages/LoginPage.tsx`, `src/pages/StaffPinPage.tsx`                                                                                       |
+| 7   | 🟨 진행중 | `feat: 팀 및 담당자 플로우 페이지 추가`                  | `src/pages/TeamPage.tsx`, `src/pages/manager/ManagerGamesPage.tsx`, `ManagerMatchesPage.tsx`, `ManagerMatchPage.tsx`                          |
 | 8   | ⬜ 대기   | `feat: 관리자 대시보드 및 4개 탭 추가`                   | `src/pages/admin/AdminPage.tsx`, `ScoresTab.tsx`, `TeamsTab.tsx`, `GamesTab.tsx`, `SettingsTab.tsx`                                           |
 | 9   | ⬜ 대기   | `feat: 포디움 및 전체 순위 결과 페이지 추가`             | `src/pages/ResultsPage.tsx`                                                                                                                   |
 | 10  | ⬜ 대기   | `feat: 아이템 상점, 룰렛, 스왑, 순위 페이지 추가`         | `src/pages/shop/ShopPage.tsx`, `RoulettePage.tsx`, `SwapPage.tsx`, `StandingsPage.tsx`                                                        |
