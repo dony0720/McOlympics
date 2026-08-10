@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: #03b26c; text-decoration: none; }
+  a:hover { color: #02a05f; }
+  input { font-family: inherit; }
+  ::-webkit-scrollbar { display: none; }
+  @keyframes toastUp { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  @keyframes screenIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pop { 0% { transform: scale(.9); opacity: 0; } 60% { transform: scale(1.03); } 100% { transform: scale(1); opacity: 1; } }
+</style>
+</helmet>
+<div style="min-height:100vh; background:#dfe3e8; display:flex; justify-content:center; align-items:stretch;">
+<div style="width:100%; max-width:430px; background:#ffffff; min-height:100vh; position:relative; display:flex; flex-direction:column; overflow:hidden;">
+
+  <!-- ============ LOGIN ============ -->
+  <sc-if value="{{ isLogin }}">
+  <div key="login" style="flex:1; display:flex; flex-direction:column; padding:64px 24px 28px; animation:screenIn .25s ease;">
+    <div style="width:52px; height:52px; border-radius:16px; background:#03b26c; display:flex; align-items:center; justify-content:center; margin-bottom:22px;">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M7 14l3-3 3 2 4-5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 20h16" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </div>
+    <div style="font-size:26px; font-weight:700; color:#191f28; line-height:1.32; letter-spacing:-0.4px;">레크레이션<br>점수판</div>
+    <div style="font-size:16px; color:#8b95a1; margin-top:10px; line-height:1.5;">팀 코드를 입력하고 입장하세요</div>
+
+    <div style="margin-top:36px;">
+      <div style="font-size:14px; font-weight:600; color:#6b7684; margin-bottom:8px;">팀 코드</div>
+      <input value="{{ codeInput }}" onChange="{{ onCodeInput }}" onKeyDown="{{ onCodeKey }}" placeholder="예: K7QX" maxlength="6" style="width:100%; padding:17px 18px; border:none; border-radius:14px; background:#f2f4f6; font-size:22px; font-weight:700; color:#191f28; outline:none; letter-spacing:6px; text-transform:uppercase;" style-focus="background:#ffffff; box-shadow: inset 0 0 0 1.6px #03b26c;">
+      <sc-if value="{{ loginError }}">
+        <div style="color:#f04452; font-size:14px; font-weight:500; margin-top:9px;">{{ loginError }}</div>
+      </sc-if>
+    </div>
+
+    <button onClick="{{ submitTeamCode }}" style="margin-top:20px; width:100%; padding:17px; background:#03b26c; color:#fff; border:none; border-radius:14px; font-size:17px; font-weight:600; cursor:pointer;" style-active="background:#02a05f;">입장하기</button>
+
+    <div style="margin-top:auto; padding-top:28px;">
+      <button onClick="{{ goStaff }}" style="width:100%; padding:15px; background:none; border:none; color:#4e5968; font-size:15px; font-weight:600; cursor:pointer;">담당자 · 관리자 로그인 →</button>
+      <div style="margin-top:14px; background:#f9fafb; border:1px solid #f2f4f6; border-radius:14px; padding:14px 16px;">
+        <div style="font-size:12px; font-weight:700; color:#8b95a1; letter-spacing:0.3px;">데모 안내</div>
+        <div style="font-size:13px; color:#6b7684; margin-top:6px; line-height:1.7;">팀 코드 <b style="color:#191f28;">{{ demoCode }}</b> · 담당자 PIN <b style="color:#191f28;">1234</b> · 관리자 PIN <b style="color:#191f28;">9999</b></div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ STAFF PIN ============ -->
+  <sc-if value="{{ isStaffPin }}">
+  <div key="pin" style="flex:1; display:flex; flex-direction:column; padding:14px 24px 28px; animation:screenIn .25s ease;">
+    <button onClick="{{ toLogin }}" style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:none; border:none; cursor:pointer; margin-left:-10px;">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#191f28" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div style="margin-top:34px; font-size:24px; font-weight:700; color:#191f28; letter-spacing:-0.3px;">담당자 · 관리자 로그인</div>
+    <div style="font-size:16px; color:#8b95a1; margin-top:10px;">PIN 4자리를 입력하세요</div>
+
+    <div style="margin-top:34px;">
+      <input value="{{ pinInput }}" onChange="{{ onPinInput }}" onKeyDown="{{ onPinKey }}" type="password" inputmode="numeric" maxlength="4" placeholder="••••" style="width:100%; padding:17px 18px; border:none; border-radius:14px; background:#f2f4f6; font-size:24px; font-weight:700; color:#191f28; outline:none; letter-spacing:10px; text-align:center;" style-focus="background:#ffffff; box-shadow: inset 0 0 0 1.6px #03b26c;">
+      <sc-if value="{{ loginError }}">
+        <div style="color:#f04452; font-size:14px; font-weight:500; margin-top:9px; text-align:center;">{{ loginError }}</div>
+      </sc-if>
+    </div>
+
+    <button onClick="{{ submitPin }}" style="margin-top:20px; width:100%; padding:17px; background:#03b26c; color:#fff; border:none; border-radius:14px; font-size:17px; font-weight:600; cursor:pointer;" style-active="background:#02a05f;">로그인</button>
+    <div style="margin-top:16px; text-align:center; font-size:13px; color:#b0b8c1;">담당자 1234 · 관리자 9999</div>
+  </div>
+  </sc-if>
+
+  <!-- ============ TEAM VIEW ============ -->
+  <sc-if value="{{ isTeam }}">
+  <div key="team" style="flex:1; display:flex; flex-direction:column; animation:screenIn .25s ease;">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px;">
+      <div style="font-size:15px; font-weight:600; color:#8b95a1;">우리 팀 점수</div>
+      <button onClick="{{ logout }}" style="background:none; border:none; color:#8b95a1; font-size:14px; font-weight:600; cursor:pointer;">나가기</button>
+    </div>
+
+    <div style="padding:8px 20px 24px; display:flex; flex-direction:column; align-items:center;">
+      <div style="width:64px; height:64px; border-radius:22px; background:{{ myTeamColor }}; display:flex; align-items:center; justify-content:center; margin-bottom:16px; animation:pop .4s ease;">
+        <span style="font-size:26px; font-weight:800; color:#fff;">{{ myTeamInitial }}</span>
+      </div>
+      <div style="font-size:19px; font-weight:700; color:#191f28;">{{ myTeamName }}</div>
+      <div style="margin-top:26px; font-size:15px; color:#8b95a1; font-weight:500;">지금까지 모은 점수</div>
+      <div style="display:flex; align-items:baseline; gap:6px; margin-top:4px; animation:pop .5s ease;">
+        <span style="font-size:64px; font-weight:800; color:#191f28; letter-spacing:-2px; font-variant-numeric:tabular-nums;">{{ myTeamTotal }}</span>
+        <span style="font-size:24px; font-weight:700; color:#03b26c;">점</span>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:22px;">
+        <button onClick="{{ openShop }}" style="display:flex; align-items:center; gap:6px; padding:11px 15px; background:#191f28; border:none; border-radius:22px; color:#fff; font-size:15px; font-weight:700; cursor:pointer; white-space:nowrap;" style-active="background:#333d4b;">🎁 상점 <span style="background:#ffd158; color:#191f28; font-size:12px; font-weight:800; padding:2px 7px; border-radius:20px;">{{ myItemPoints }}P</span></button>
+        <button onClick="{{ openSchedule }}" style="display:flex; align-items:center; gap:6px; padding:11px 15px; background:#e6f7ef; border:none; border-radius:22px; color:#03b26c; font-size:15px; font-weight:700; cursor:pointer; white-space:nowrap;" style-active="background:#c3ecd8;">🏅 진행 순서</button>
+      </div>
+    </div>
+
+    <div style="flex:1; background:#f9fafb; border-top:1px solid #f2f4f6; padding:22px 20px;">
+      <div style="font-size:14px; font-weight:700; color:#6b7684; margin-bottom:12px;">게임별 점수</div>
+      <div style="display:flex; flex-direction:column; gap:2px;">
+        <sc-for list="{{ teamBreakdown }}" as="g" hint-placeholder-count="3">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 4px; border-bottom:1px solid #f2f4f6;">
+            <span style="font-size:16px; color:#333d4b; font-weight:500;">{{ g.name }}</span>
+            <span style="font-size:17px; color:#191f28; font-weight:700; font-variant-numeric:tabular-nums;">{{ g.label }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="text-align:center; margin-top:22px; font-size:13px; color:#b0b8c1;">점수는 담당자가 입력하는 대로 반영돼요</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ MANAGER: PICK GAME ============ -->
+  <sc-if value="{{ isManagerGames }}">
+  <div key="mg" style="flex:1; display:flex; flex-direction:column; animation:screenIn .25s ease;">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px;">
+      <div style="font-size:13px; font-weight:700; color:#03b26c; background:#e6f7ef; padding:5px 11px; border-radius:8px;">담당자</div>
+      <button onClick="{{ logout }}" style="background:none; border:none; color:#8b95a1; font-size:14px; font-weight:600; cursor:pointer;">나가기</button>
+    </div>
+    <div style="padding:8px 20px 4px;">
+      <div style="font-size:24px; font-weight:700; color:#191f28; letter-spacing:-0.3px;">담당 게임을<br>선택하세요</div>
+      <div style="display:flex; gap:8px; margin-top:14px;">
+        <button onClick="{{ openStatus }}" style="display:flex; align-items:center; gap:7px; padding:10px 16px; background:#191f28; border:none; border-radius:20px; color:#fff; font-size:14px; font-weight:700; cursor:pointer;" style-active="background:#333d4b;">📋 경기 현황판</button>
+        <button onClick="{{ openSchedule }}" style="display:flex; align-items:center; gap:7px; padding:10px 16px; background:#e6f7ef; border:none; border-radius:20px; color:#03b26c; font-size:14px; font-weight:700; cursor:pointer;" style-active="background:#c3ecd8;">🏅 진행 순서</button>
+      </div>
+    </div>
+    <div style="padding:22px 20px; display:flex; flex-direction:column; gap:12px;">
+      <sc-for list="{{ managerGameCards }}" as="g" hint-placeholder-count="3">
+        <button onClick="{{ g.pick }}" style="width:100%; text-align:left; display:flex; align-items:center; justify-content:space-between; padding:20px; background:#f9fafb; border:1px solid #f2f4f6; border-radius:16px; cursor:pointer;" style-active="background:#f2f4f6;">
+          <div>
+            <div style="font-size:17px; font-weight:700; color:#191f28;">{{ g.name }}</div>
+            <div style="font-size:13px; color:#8b95a1; margin-top:4px;">{{ g.sub }}</div>
+          </div>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="#b0b8c1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </sc-for>
+      <sc-if value="{{ noGames }}">
+        <div style="text-align:center; padding:40px 0; color:#b0b8c1; font-size:15px;">아직 등록된 게임이 없어요.<br>관리자가 게임을 추가해 주세요.</div>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ MANAGER: PICK MATCH ============ -->
+  <sc-if value="{{ isManagerMatches }}">
+  <div key="mm" style="flex:1; display:flex; flex-direction:column; animation:screenIn .25s ease;">
+    <div style="display:flex; align-items:center; gap:6px; padding:12px 16px;">
+      <button onClick="{{ backToManagerGames }}" style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:none; border:none; cursor:pointer;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#191f28" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div style="font-size:18px; font-weight:700; color:#191f28;">{{ managerGameName }}</div>
+    </div>
+    <div style="padding:6px 20px 12px; font-size:14px; color:#8b95a1;">진행할 대진을 선택하세요.</div>
+    <div style="flex:1; padding:4px 20px 20px; display:flex; flex-direction:column; gap:12px;">
+      <sc-for list="{{ managerMatchCards }}" as="m" hint-placeholder-count="3">
+        <button onClick="{{ m.pick }}" style="width:100%; text-align:left; display:flex; align-items:center; gap:12px; padding:18px; background:#f9fafb; border:1px solid #f2f4f6; border-radius:16px; cursor:pointer;" style-active="background:#f2f4f6;">
+          <div style="width:32px; height:32px; border-radius:10px; background:{{ m.aColor }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><span style="font-size:13px; font-weight:800; color:#fff;">{{ m.aInitial }}</span></div>
+          <span style="font-size:16px; font-weight:700; color:#191f28;">{{ m.aName }}</span>
+          <span style="font-size:13px; font-weight:700; color:#b0b8c1;">vs</span>
+          <div style="width:32px; height:32px; border-radius:10px; background:{{ m.bColor }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><span style="font-size:13px; font-weight:800; color:#fff;">{{ m.bInitial }}</span></div>
+          <span style="font-size:16px; font-weight:700; color:#191f28;">{{ m.bName }}</span>
+          <span style="margin-left:auto; display:flex; align-items:center; gap:5px;">
+            <span style="width:7px; height:7px; border-radius:50%; background:{{ m.badgeDot }};"></span>
+            <span style="font-size:13px; font-weight:700; color:{{ m.badgeColor }};">{{ m.badge }}</span>
+          </span>
+        </button>
+      </sc-for>
+      <sc-if value="{{ managerMatchNoMatches }}">
+        <div style="text-align:center; padding:40px 0; color:#b0b8c1; font-size:15px;">이 게임은 순위 발표 후<br>대진이 확정돼요.</div>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ MANAGER: MATCH DETAIL ============ -->
+  <sc-if value="{{ isManagerMatch }}">
+  <div key="md" style="flex:1; display:flex; flex-direction:column; animation:screenIn .25s ease;">
+    <div style="display:flex; align-items:center; gap:6px; padding:12px 16px;">
+      <button onClick="{{ backToManagerMatches }}" style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:none; border:none; cursor:pointer;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#191f28" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div style="font-size:18px; font-weight:700; color:#191f28;">{{ mDetail.gameName }}</div>
+      <span style="margin-left:auto; font-size:12px; font-weight:700; padding:4px 9px; border-radius:8px; {{ mDetail.placeStyle }}">{{ mDetail.place }}</span>
+    </div>
+
+    <div style="flex:1; overflow-y:auto; background:#f9fafb; border-top:1px solid #f2f4f6; padding:18px 16px 20px;">
+      <!-- match title -->
+      <div style="display:flex; align-items:center; justify-content:center; gap:12px; padding:6px 0 20px;">
+        <span style="font-size:20px; font-weight:800; color:#191f28;">{{ mDetail.aName }}</span>
+        <span style="font-size:15px; font-weight:700; color:#b0b8c1;">vs</span>
+        <span style="font-size:20px; font-weight:800; color:#191f28;">{{ mDetail.bName }}</span>
+      </div>
+
+      <!-- status -->
+      <div style="background:#fff; border:1px solid #f2f4f6; border-radius:16px; padding:16px; margin-bottom:12px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+          <span style="font-size:14px; font-weight:700; color:#6b7684;">경기 상태</span>
+          <span style="display:flex; align-items:center; gap:5px;">
+            <span style="width:7px; height:7px; border-radius:50%; background:{{ mDetail.statusDot }};"></span>
+            <span style="font-size:13px; font-weight:700; color:{{ mDetail.statusColor }};">{{ mDetail.statusLabel }}</span>
+          </span>
+        </div>
+        <div style="display:flex; gap:5px; background:#f2f4f6; border-radius:11px; padding:4px;">
+          <sc-for list="{{ mDetail.statusOptions }}" as="o" hint-placeholder-count="3">
+            <button onClick="{{ o.select }}" style="{{ o.style }}">{{ o.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- scores -->
+      <div style="background:#fff; border:1px solid #f2f4f6; border-radius:16px; padding:16px;">
+        <div style="font-size:14px; font-weight:700; color:#6b7684; margin-bottom:12px;">점수 입력</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <sc-for list="{{ mDetail.rows }}" as="row" hint-placeholder-count="2">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:34px; height:34px; border-radius:11px; background:{{ row.color }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <span style="font-size:15px; font-weight:800; color:#fff;">{{ row.initial }}</span>
+              </div>
+              <div style="flex:1; font-size:16px; font-weight:600; color:#191f28; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ row.name }}</div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <button onClick="{{ row.dec }}" style="width:38px; height:38px; border-radius:11px; background:#f2f4f6; border:none; cursor:pointer; font-size:22px; font-weight:600; color:#4e5968; display:flex; align-items:center; justify-content:center; padding:0;" style-active="background:#e5e8eb;">−</button>
+                <input value="{{ row.score }}" onChange="{{ row.onInput }}" inputmode="numeric" style="width:58px; height:38px; border:none; border-radius:10px; background:#f9fafb; box-shadow:inset 0 0 0 1.5px #e5e8eb; text-align:center; font-size:17px; font-weight:700; color:#191f28; outline:none;" style-focus="box-shadow:inset 0 0 0 1.6px #03b26c;">
+                <button onClick="{{ row.inc }}" style="width:38px; height:38px; border-radius:11px; background:#e6f7ef; border:none; cursor:pointer; font-size:22px; font-weight:600; color:#03b26c; display:flex; align-items:center; justify-content:center; padding:0;" style-active="background:#c3ecd8;">+</button>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    <div style="padding:12px 20px 24px; border-top:1px solid #f2f4f6; background:#fff;">
+      <button onClick="{{ backToManagerMatches }}" style="width:100%; padding:17px; background:#03b26c; color:#fff; border:none; border-radius:14px; font-size:17px; font-weight:600; cursor:pointer;" style-active="background:#02a05f;">저장하고 대진 목록으로</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ ADMIN ============ -->
+  <sc-if value="{{ isAdmin }}">
+  <div key="admin" style="flex:1; display:flex; flex-direction:column; animation:screenIn .25s ease;">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px 12px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div style="font-size:13px; font-weight:700; color:#fff; background:#191f28; padding:5px 11px; border-radius:8px;">관리자</div>
+        <div style="font-size:18px; font-weight:700; color:#191f28;">대시보드</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:14px;">
+        <button onClick="{{ openStatus }}" style="background:none; border:none; color:#191f28; font-size:14px; font-weight:700; cursor:pointer;">현황</button>
+        <button onClick="{{ openSchedule }}" style="background:none; border:none; color:#03b26c; font-size:14px; font-weight:700; cursor:pointer;">순서</button>
+        <button onClick="{{ logout }}" style="background:none; border:none; color:#8b95a1; font-size:14px; font-weight:600; cursor:pointer;">나가기</button>
+      </div>
+    </div>
+
+    <!-- tabs -->
+    <div style="display:flex; gap:4px; padding:0 16px 4px;">
+      <sc-for list="{{ adminTabs }}" as="t" hint-placeholder-count="4">
+        <button onClick="{{ t.select }}" style="{{ t.style }}">{{ t.name }}</button>
+      </sc-for>
+    </div>
+
+    <div style="flex:1; overflow-y:auto; background:#f9fafb; border-top:1px solid #f2f4f6;">
+
+      <!-- SCORES TAB -->
+      <sc-if value="{{ adminIsScores }}">
+      <div style="padding:16px;">
+        <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:14px;">
+          <sc-for list="{{ adminGameChips }}" as="c" hint-placeholder-count="3">
+            <button onClick="{{ c.select }}" style="{{ c.style }}">{{ c.name }}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ noGames }}">
+          <div style="text-align:center; padding:40px 0; color:#b0b8c1; font-size:15px;">게임 탭에서 게임을 먼저 추가하세요.</div>
+        </sc-if>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <sc-for list="{{ adminScoreRows }}" as="row" hint-placeholder-count="5">
+            <div style="display:flex; align-items:center; gap:12px; padding:14px 16px; background:#fff; border:1px solid #f2f4f6; border-radius:16px;">
+              <div style="width:34px; height:34px; border-radius:11px; background:{{ row.color }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <span style="font-size:15px; font-weight:800; color:#fff;">{{ row.initial }}</span>
+              </div>
+              <div style="flex:1; font-size:16px; font-weight:600; color:#191f28; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ row.name }}</div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <button onClick="{{ row.dec }}" style="width:38px; height:38px; border-radius:11px; background:#f2f4f6; border:none; cursor:pointer; font-size:22px; font-weight:600; color:#4e5968; display:flex; align-items:center; justify-content:center; padding:0;" style-active="background:#e5e8eb;">−</button>
+                <input value="{{ row.score }}" onChange="{{ row.onInput }}" inputmode="numeric" style="width:58px; height:38px; border:none; border-radius:10px; background:#f9fafb; box-shadow:inset 0 0 0 1.5px #e5e8eb; text-align:center; font-size:17px; font-weight:700; color:#191f28; outline:none;" style-focus="box-shadow:inset 0 0 0 1.6px #03b26c;">
+                <button onClick="{{ row.inc }}" style="width:38px; height:38px; border-radius:11px; background:#e6f7ef; border:none; cursor:pointer; font-size:22px; font-weight:600; color:#03b26c; display:flex; align-items:center; justify-content:center; padding:0;" style-active="background:#c3ecd8;">+</button>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- TEAMS TAB -->
+      <sc-if value="{{ adminIsTeams }}">
+      <div style="padding:16px;">
+        <div style="font-size:13px; color:#8b95a1; margin-bottom:12px; line-height:1.6;">팀을 추가하면 <b style="color:#4e5968;">입장 코드</b>가 자동 발급돼요. 각 팀에게 코드를 알려주세요.</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <sc-for list="{{ adminTeamRows }}" as="row" hint-placeholder-count="4">
+            <div style="display:flex; align-items:center; gap:12px; padding:12px 14px; background:#fff; border:1px solid #f2f4f6; border-radius:16px;">
+              <div style="width:12px; height:12px; border-radius:50%; background:{{ row.color }}; flex-shrink:0;"></div>
+              <input value="{{ row.name }}" onChange="{{ row.onName }}" style="flex:1; min-width:0; border:none; background:none; font-size:16px; font-weight:600; color:#191f28; outline:none; padding:6px 0;">
+              <span style="font-family:'SF Mono',ui-monospace,monospace; font-size:14px; font-weight:700; color:#03b26c; background:#e6f7ef; padding:5px 9px; border-radius:8px; letter-spacing:1px;">{{ row.code }}</span>
+              <button onClick="{{ row.remove }}" style="width:32px; height:32px; background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#b0b8c1" stroke-width="2" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+          </sc-for>
+        </div>
+        <button onClick="{{ addTeam }}" style="margin-top:12px; width:100%; padding:15px; background:#e6f7ef; color:#03b26c; border:none; border-radius:14px; font-size:16px; font-weight:700; cursor:pointer;" style-active="background:#c3ecd8;">+ 팀 추가</button>
+      </div>
+      </sc-if>
+
+      <!-- GAMES TAB -->
+      <sc-if value="{{ adminIsGames }}">
+      <div style="padding:16px;">
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <sc-for list="{{ adminGameRows }}" as="row" hint-placeholder-count="3">
+            <div style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:#fff; border:1px solid #f2f4f6; border-radius:16px;">
+              <div style="width:30px; height:30px; border-radius:9px; background:#f2f4f6; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:14px; font-weight:700; color:#6b7684;">{{ row.num }}</div>
+              <input value="{{ row.name }}" onChange="{{ row.onName }}" style="flex:1; min-width:0; border:none; background:none; font-size:16px; font-weight:600; color:#191f28; outline:none; padding:6px 0;">
+              <button onClick="{{ row.remove }}" style="width:32px; height:32px; background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="#b0b8c1" stroke-width="2" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+          </sc-for>
+        </div>
+        <button onClick="{{ addGame }}" style="margin-top:12px; width:100%; padding:15px; background:#e6f7ef; color:#03b26c; border:none; border-radius:14px; font-size:16px; font-weight:700; cursor:pointer;" style-active="background:#c3ecd8;">+ 게임 추가</button>
+      </div>
+      </sc-if>
+
+      <!-- SETTINGS TAB -->
+      <sc-if value="{{ adminIsSettings }}">
+      <div style="padding:16px;">
+        <div style="background:#fff; border:1px solid #f2f4f6; border-radius:16px; overflow:hidden;">
+          <button onClick="{{ resetScores }}" style="width:100%; text-align:left; padding:18px 16px; background:none; border:none; border-bottom:1px solid #f2f4f6; cursor:pointer;" style-active="background:#f9fafb;">
+            <div style="font-size:16px; font-weight:600; color:#191f28;">점수 초기화</div>
+            <div style="font-size:13px; color:#8b95a1; margin-top:3px;">모든 점수를 0으로 되돌려요. 팀·게임은 유지돼요.</div>
+          </button>
+          <button onClick="{{ resetAll }}" style="width:100%; text-align:left; padding:18px 16px; background:none; border:none; cursor:pointer;" style-active="background:#f9fafb;">
+            <div style="font-size:16px; font-weight:600; color:#f04452;">대회 리셋</div>
+            <div style="font-size:13px; color:#8b95a1; margin-top:3px;">팀·게임·점수를 모두 삭제하고 처음부터 시작해요.</div>
+          </button>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+
+    <!-- admin bottom CTA -->
+    <div style="padding:12px 20px 24px; border-top:1px solid #f2f4f6; background:#fff;">
+      <button onClick="{{ toResults }}" style="width:100%; padding:17px; background:#191f28; color:#fff; border:none; border-radius:14px; font-size:17px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;" style-active="background:#333d4b;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 4h10v4a5 5 0 01-10 0V4z" stroke="#ffd158" stroke-width="1.8" stroke-linejoin="round"/><path d="M17 5h2.5a2 2 0 01-2.5 3M7 5H4.5a2 2 0 002.5 3M10 13h4v3h-4z" stroke="#ffd158" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 20h8" stroke="#ffd158" stroke-width="1.8" stroke-linecap="round"/></svg>
+        결과 발표하기
+      </button>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ RESULTS ============ -->
+  <sc-if value="{{ isResults }}">
+  <div key="res" style="flex:1; display:flex; flex-direction:column; background:#191f28; animation:screenIn .3s ease;">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px;">
+      <button onClick="{{ backToAdmin }}" style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:none; border:none; cursor:pointer; margin-left:-10px;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#8b95a1" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div style="font-size:15px; font-weight:600; color:#8b95a1;">최종 결과</div>
+      <div style="width:40px;"></div>
+    </div>
+
+    <div style="text-align:center; padding:12px 20px 26px;">
+      <div style="font-size:26px; font-weight:800; color:#fff; letter-spacing:-0.4px;">🏆 우승 팀은?</div>
+      <sc-if value="{{ hasWinner }}">
+        <div style="font-size:15px; color:#8b95a1; margin-top:8px;">축하합니다, <b style="color:#ffd158;">{{ winnerName }}</b>!</div>
+      </sc-if>
+    </div>
+
+    <!-- podium -->
+    <div style="display:flex; align-items:flex-end; justify-content:center; gap:10px; padding:0 20px;">
+      <sc-if value="{{ podium.second }}">
+        <div style="flex:1; max-width:110px; display:flex; flex-direction:column; align-items:center;">
+          <div style="width:48px; height:48px; border-radius:16px; background:{{ podium.second.color }}; display:flex; align-items:center; justify-content:center; margin-bottom:8px;"><span style="font-size:20px; font-weight:800; color:#fff;">{{ podium.second.initial }}</span></div>
+          <div style="font-size:14px; font-weight:700; color:#fff; margin-bottom:2px; text-align:center;">{{ podium.second.name }}</div>
+          <div style="font-size:13px; font-weight:700; color:#c4ccd6; margin-bottom:8px;">{{ podium.second.total }}점</div>
+          <div style="width:100%; height:96px; background:linear-gradient(180deg,#4e5968,#333d4b); border-radius:14px 14px 0 0; display:flex; align-items:center; justify-content:center;"><span style="font-size:30px; font-weight:800; color:#c4ccd6;">2</span></div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ podium.first }}">
+        <div style="flex:1; max-width:120px; display:flex; flex-direction:column; align-items:center;">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" style="margin-bottom:4px;"><path d="M3 7l4 4 5-7 5 7 4-4-2 12H5L3 7z" fill="#ffd158"/></svg>
+          <div style="width:54px; height:54px; border-radius:18px; background:{{ podium.first.color }}; display:flex; align-items:center; justify-content:center; margin-bottom:8px; box-shadow:0 0 0 3px rgba(255,209,88,.4);"><span style="font-size:22px; font-weight:800; color:#fff;">{{ podium.first.initial }}</span></div>
+          <div style="font-size:15px; font-weight:800; color:#fff; margin-bottom:2px; text-align:center;">{{ podium.first.name }}</div>
+          <div style="font-size:14px; font-weight:800; color:#ffd158; margin-bottom:8px;">{{ podium.first.total }}점</div>
+          <div style="width:100%; height:140px; background:linear-gradient(180deg,#ffd158,#ffb331); border-radius:14px 14px 0 0; display:flex; align-items:center; justify-content:center; animation:pop .5s ease;"><span style="font-size:38px; font-weight:800; color:#fff;">1</span></div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ podium.third }}">
+        <div style="flex:1; max-width:110px; display:flex; flex-direction:column; align-items:center;">
+          <div style="width:44px; height:44px; border-radius:15px; background:{{ podium.third.color }}; display:flex; align-items:center; justify-content:center; margin-bottom:8px;"><span style="font-size:18px; font-weight:800; color:#fff;">{{ podium.third.initial }}</span></div>
+          <div style="font-size:14px; font-weight:700; color:#fff; margin-bottom:2px; text-align:center;">{{ podium.third.name }}</div>
+          <div style="font-size:13px; font-weight:700; color:#e0965a; margin-bottom:8px;">{{ podium.third.total }}점</div>
+          <div style="width:100%; height:72px; background:linear-gradient(180deg,#a4703c,#7a5228); border-radius:14px 14px 0 0; display:flex; align-items:center; justify-content:center;"><span style="font-size:26px; font-weight:800; color:#f5d9bf;">3</span></div>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="flex:1; background:#20262f; border-radius:24px 24px 0 0; margin-top:18px; padding:22px 20px;">
+      <div style="font-size:14px; font-weight:700; color:#8b95a1; margin-bottom:8px;">전체 순위</div>
+      <div style="display:flex; flex-direction:column;">
+        <sc-for list="{{ rankedList }}" as="r" hint-placeholder-count="5">
+          <div style="display:flex; align-items:center; gap:14px; padding:15px 4px; border-bottom:1px solid #2b323c;">
+            <span style="width:24px; font-size:17px; font-weight:800; color:{{ r.rankColor }}; text-align:center; font-variant-numeric:tabular-nums;">{{ r.rank }}</span>
+            <div style="width:30px; height:30px; border-radius:10px; background:{{ r.color }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><span style="font-size:13px; font-weight:800; color:#fff;">{{ r.initial }}</span></div>
+            <span style="flex:1; font-size:16px; font-weight:600; color:#f2f4f6;">{{ r.name }}</span>
+            <span style="font-size:17px; font-weight:800; color:#fff; font-variant-numeric:tabular-nums;">{{ r.total }}점</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ ITEM SHOP ============ -->
+  <sc-if value="{{ isShop }}">
+  <div key="shop" style="flex:1; display:flex; flex-direction:column; animation:screenIn .25s ease;">
+    <div style="display:flex; align-items:center; gap:6px; padding:12px 16px;">
+      <button onClick="{{ backFromShop }}" style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:none; border:none; cursor:pointer;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#191f28" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div style="font-size:18px; font-weight:700; color:#191f28; white-space:nowrap;">🎁 아이템 상점</div>
+    </div>
+
+    <div style="margin:4px 20px 6px; background:linear-gradient(135deg,#191f28,#333d4b); border-radius:18px; padding:18px 20px; display:flex; align-items:center; justify-content:space-between;">
+      <div>
+        <div style="font-size:13px; color:#b0b8c1; font-weight:600;">{{ shopTeamName }} 보유 포인트</div>
+        <div style="display:flex; align-items:baseline; gap:4px; margin-top:2px;"><span style="font-size:34px; font-weight:800; color:#ffd158; font-variant-numeric:tabular-nums;">{{ myItemPoints }}</span><span style="font-size:18px; font-weight:700; color:#ffd158;">P</span></div>
+      </div>
+      <div style="font-size:40px;">🪙</div>
+    </div>
+
+    <div style="flex:1; overflow-y:auto; padding:12px 20px 24px; display:flex; flex-direction:column; gap:12px;">
+      <sc-for list="{{ shopItems }}" as="it" hint-placeholder-count="4">
+        <button onClick="{{ it.action }}" style="width:100%; text-align:left; display:flex; align-items:center; gap:14px; padding:18px; background:#fff; border:1px solid #f2f4f6; border-radius:18px; cursor:pointer; opacity:{{ it.cardOpacity }};" style-active="background:#f9fafb;">
+          <div style="width:52px; height:52px; border-radius:15px; background:{{ it.bg }}; display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0;">{{ it.emoji }}</div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-size:17px; font-weight:700; color:#191f28;">{{ it.name }}</div>
+            <div style="font-size:13px; color:#8b95a1; margin-top:3px; line-height:1.4;">{{ it.desc }}</div>
+          </div>
+          <span style="flex-shrink:0; font-size:15px; font-weight:800; color:{{ it.accent }}; background:{{ it.bg }}; padding:8px 12px; border-radius:12px;">{{ it.costLabel }}</span>
+        </button>
+      </sc-for>
+      <div style="text-align:center; margin-top:6px; font-size:13px; color:#b0b8c1; line-height:1.6;">아이템으로 얻은 점수는 우리 팀 총점에 바로 반영돼요</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ ROULETTE ============ -->
+  <sc-if value="{{ isRoulette }}">
+  <div key="roul" style="flex:1; display:flex; flex-direction:column; background:linear-gradient(180deg,#1b1030,#2a1a4a); animation:screenIn .25s ease;">
+    <div style="display:flex; align-items:center; gap:6px; padding:12px 16px;">
+      <button onClick="{{ backToShop }}" style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:none; border:none; cursor:pointer;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#d9c9ff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div style="font-size:18px; font-weight:700; color:#fff; white-space:nowrap;">🎰 행운의 룰렛</div>
+      <span style="margin-left:auto; font-size:13px; font-weight:800; color:#191f28; background:#ffd158; padding:5px 11px; border-radius:20px;">{{ myItemPoints }}P</span>
+    </div>
+
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 20px;">
+      <div style="font-size:15px; color:#d9c9ff; font-weight:600; margin-bottom:20px; text-align:center;">한 번에 10P · 나오는 만큼 점수가 오르내려요</div>
+
+      <!-- reel -->
+      <div style="position:relative; width:100%; max-width:340px; height:104px;">
+        <!-- pointer -->
+        <div style="position:absolute; top:-9px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:9px solid transparent; border-right:9px solid transparent; border-top:12px solid #ffd158; z-index:3;"></div>
+        <div style="position:absolute; inset:0; border-radius:18px; overflow:hidden; background:#120a24; box-shadow:inset 0 0 0 2px rgba(255,255,255,.08);">
+          <div style="{{ reelStripStyle }}">
+            <sc-for list="{{ rouletteCells }}" as="c" hint-placeholder-count="14">
+              <div style="width:84px; height:104px; flex-shrink:0; display:flex; align-items:center; justify-content:center; border-right:1px solid rgba(255,255,255,.05);">
+                <div style="width:64px; height:78px; border-radius:14px; background:{{ c.bg }}; display:flex; align-items:center; justify-content:center;"><span style="font-size:22px; font-weight:800; color:{{ c.color }};">{{ c.label }}</span></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <!-- center frame -->
+        <div style="position:absolute; top:0; left:50%; transform:translateX(-50%); width:80px; height:104px; border-radius:14px; box-shadow:0 0 0 3px #ffd158, 0 0 22px rgba(255,209,88,.5); pointer-events:none; z-index:2;"></div>
+      </div>
+
+      <!-- result -->
+      <sc-if value="{{ rouletteDone }}">
+        <div style="margin-top:26px; text-align:center; animation:pop .4s ease;">
+          <div style="font-size:14px; color:#d9c9ff; font-weight:600;">결과</div>
+          <div style="font-size:44px; font-weight:800; color:{{ rResultColor }}; letter-spacing:-1px;">{{ rResultLabel }}</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ rouletteIdle }}">
+        <div style="margin-top:26px; height:70px; display:flex; align-items:center; color:#8a7bb0; font-size:15px; font-weight:600;">버튼을 눌러 돌려보세요</div>
+      </sc-if>
+      <sc-if value="{{ rouletteSpinning }}">
+        <div style="margin-top:26px; height:70px; display:flex; align-items:center; color:#ffd158; font-size:16px; font-weight:700;">두구두구…</div>
+      </sc-if>
+    </div>
+
+    <div style="padding:12px 20px 28px; display:flex; flex-direction:column; gap:10px;">
+      <sc-if value="{{ rouletteDone }}">
+        <button onClick="{{ spinRoulette }}" style="width:100%; padding:17px; background:#ffd158; color:#191f28; border:none; border-radius:14px; font-size:17px; font-weight:800; cursor:pointer; opacity:{{ spinAgainOpacity }};" style-active="background:#f5c400;">한 번 더 돌리기 (10P)</button>
+        <button onClick="{{ backToShop }}" style="width:100%; padding:15px; background:rgba(255,255,255,.1); color:#fff; border:none; border-radius:14px; font-size:15px; font-weight:700; cursor:pointer;">상점으로 돌아가기</button>
+      </sc-if>
+      <sc-if value="{{ rouletteIdle }}">
+        <button onClick="{{ spinRoulette }}" style="width:100%; padding:18px; background:#ffd158; color:#191f28; border:none; border-radius:14px; font-size:18px; font-weight:800; cursor:pointer;" style-active="background:#f5c400;">돌리기 🎰 (10P)</button>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ SWAP ============ -->
+  <sc-if value="{{ isSwap }}">
+  <div key="swap" style="flex:1; display:flex; flex-direction:column; animation:screenIn .25s ease;">
+    <div style="display:flex; align-items:center; gap:6px; padding:12px 16px;">
+      <button onClick="{{ backFromSwap }}" style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:none; border:none; cursor:pointer;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#191f28" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div style="font-size:18px; font-weight:700; color:#191f28;">🔄 점수 바꾸기</div>
+    </div>
+    <div style="padding:6px 20px 16px; font-size:14px; color:#8b95a1; line-height:1.6;">총점을 바꿀 팀을 고르세요. <b style="color:#f04452;">100P</b>가 소모되고, 두 팀의 총점이 통째로 교환돼요.</div>
+    <div style="flex:1; overflow-y:auto; background:#f9fafb; border-top:1px solid #f2f4f6; padding:16px 16px 24px; display:flex; flex-direction:column; gap:10px;">
+      <sc-for list="{{ swapTargets }}" as="t" hint-placeholder-count="5">
+        <button onClick="{{ t.pick }}" style="width:100%; text-align:left; display:flex; align-items:center; gap:12px; padding:16px; background:#fff; border:1px solid #f2f4f6; border-radius:16px; cursor:pointer;" style-active="background:#f2f4f6;">
+          <div style="width:36px; height:36px; border-radius:12px; background:{{ t.color }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><span style="font-size:16px; font-weight:800; color:#fff;">{{ t.initial }}</span></div>
+          <span style="flex:1; font-size:16px; font-weight:700; color:#191f28;">{{ t.name }}</span>
+          <span style="font-size:16px; font-weight:800; color:#191f28; font-variant-numeric:tabular-nums;">{{ t.total }}점</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ STANDINGS (peek) ============ -->
+  <sc-if value="{{ isStandings }}">
+  <div key="stand" style="flex:1; display:flex; flex-direction:column; animation:screenIn .25s ease;">
+    <div style="display:flex; align-items:center; gap:6px; padding:12px 16px;">
+      <button onClick="{{ backFromStandings }}" style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:none; border:none; cursor:pointer;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#191f28" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div style="font-size:18px; font-weight:700; color:#191f28;">👀 전체 현황</div>
+    </div>
+    <div style="padding:6px 20px 14px; font-size:14px; color:#8b95a1;">지금 이 순간의 전체 순위예요.</div>
+    <div style="flex:1; overflow-y:auto; background:#f9fafb; border-top:1px solid #f2f4f6; padding:14px 16px 24px;">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <sc-for list="{{ rankedList }}" as="r" hint-placeholder-count="6">
+          <div style="display:flex; align-items:center; gap:14px; padding:15px 16px; background:#fff; border:1px solid #f2f4f6; border-radius:16px;">
+            <span style="width:22px; font-size:17px; font-weight:800; color:{{ r.rankColor }}; text-align:center; font-variant-numeric:tabular-nums;">{{ r.rank }}</span>
+            <div style="width:32px; height:32px; border-radius:10px; background:{{ r.color }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><span style="font-size:14px; font-weight:800; color:#fff;">{{ r.initial }}</span></div>
+            <span style="flex:1; font-size:16px; font-weight:700; color:#191f28;">{{ r.name }}</span>
+            <span style="font-size:17px; font-weight:800; color:#191f28; font-variant-numeric:tabular-nums;">{{ r.total }}점</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ STATUS BOARD ============ -->
+  <sc-if value="{{ isStatus }}">
+  <div key="status" style="flex:1; display:flex; flex-direction:column; animation:screenIn .25s ease;">
+    <div style="display:flex; align-items:center; gap:6px; padding:12px 16px;">
+      <button onClick="{{ backFromStatus }}" style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:none; border:none; cursor:pointer;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#191f28" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div style="font-size:18px; font-weight:700; color:#191f28;">📋 경기 현황판</div>
+    </div>
+    <div style="padding:0 20px 12px; display:flex; gap:8px;">
+      <sc-for list="{{ statusSummary }}" as="c" hint-placeholder-count="3">
+        <div style="flex:1; background:#f9fafb; border:1px solid #f2f4f6; border-radius:14px; padding:12px; text-align:center;">
+          <div style="font-size:22px; font-weight:800; color:{{ c.color }}; font-variant-numeric:tabular-nums;">{{ c.n }}</div>
+          <div style="font-size:12px; font-weight:600; color:#8b95a1; margin-top:2px;">{{ c.label }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="flex:1; overflow-y:auto; background:#f9fafb; border-top:1px solid #f2f4f6; padding:16px;">
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <sc-for list="{{ statusGames }}" as="g" hint-placeholder-count="6">
+          <div style="background:#fff; border:1px solid #f2f4f6; border-radius:16px; padding:16px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+              <span style="font-size:13px; font-weight:800; color:#03b26c;">{{ g.time }}</span>
+              <span style="font-size:12px; font-weight:700; padding:4px 9px; border-radius:8px; {{ g.placeStyle }}">{{ g.place }}</span>
+            </div>
+            <div style="font-size:17px; font-weight:700; color:#191f28; margin-bottom:14px;">{{ g.name }}</div>
+
+            <sc-if value="{{ g.pending }}">
+              <div style="font-size:14px; font-weight:600; color:#8b95a1; padding:6px 0;">순위 발표 후 대진 확정</div>
+            </sc-if>
+
+            <div style="display:flex; flex-direction:column; gap:16px;">
+              <sc-for list="{{ g.matches }}" as="m" hint-placeholder-count="3">
+                <div>
+                  <div style="display:flex; align-items:center; gap:8px; margin-bottom:9px;">
+                    <div style="width:24px; height:24px; border-radius:7px; background:{{ m.aColor }}; display:flex; align-items:center; justify-content:center;"><span style="font-size:11px; font-weight:800; color:#fff;">{{ m.aInitial }}</span></div>
+                    <span style="font-size:15px; font-weight:700; color:#191f28;">{{ m.aName }}</span>
+                    <span style="font-size:13px; font-weight:700; color:#b0b8c1;">vs</span>
+                    <div style="width:24px; height:24px; border-radius:7px; background:{{ m.bColor }}; display:flex; align-items:center; justify-content:center;"><span style="font-size:11px; font-weight:800; color:#fff;">{{ m.bInitial }}</span></div>
+                    <span style="font-size:15px; font-weight:700; color:#191f28;">{{ m.bName }}</span>
+                    <span style="margin-left:auto; display:flex; align-items:center; gap:5px;">
+                      <span style="width:7px; height:7px; border-radius:50%; background:{{ m.badgeDot }};"></span>
+                      <span style="font-size:13px; font-weight:700; color:{{ m.badgeColor }};">{{ m.badge }}</span>
+                    </span>
+                  </div>
+                  <div style="display:flex; gap:5px; background:#f2f4f6; border-radius:11px; padding:4px;">
+                    <sc-for list="{{ m.options }}" as="o" hint-placeholder-count="3">
+                      <button onClick="{{ o.select }}" style="{{ o.style }}">{{ o.label }}</button>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="text-align:center; margin-top:18px; font-size:13px; color:#b0b8c1; line-height:1.6;">담당자가 상태를 바꾸면<br>모두에게 같은 현황이 보여요</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ SCHEDULE ============ -->
+  <sc-if value="{{ isSchedule }}">
+  <div key="sched" style="flex:1; display:flex; flex-direction:column; animation:screenIn .25s ease;">
+    <div style="display:flex; align-items:center; gap:6px; padding:12px 16px;">
+      <button onClick="{{ backFromSchedule }}" style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:none; border:none; cursor:pointer;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#191f28" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div style="font-size:18px; font-weight:700; color:#191f28;">🏅 게임 진행 순서</div>
+    </div>
+
+    <div style="flex:1; overflow-y:auto; background:#f9fafb; border-top:1px solid #f2f4f6; padding:18px 16px 24px;">
+
+      <!-- team's own 대진표 -->
+      <sc-if value="{{ scheduleIsTeam }}">
+      <div style="font-size:14px; color:#8b95a1; margin-bottom:14px;"><b style="color:#03b26c;">{{ scheduleTeamName }}</b> 대진표예요. 매 타임 시작 전 장소로 이동하세요.</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <sc-for list="{{ teamScheduleRows }}" as="r" hint-placeholder-count="6">
+          <div style="background:#fff; border:1px solid #f2f4f6; border-radius:16px; padding:16px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+              <span style="font-size:13px; font-weight:800; color:#03b26c;">{{ r.time }}</span>
+              <span style="font-size:12px; font-weight:700; padding:4px 9px; border-radius:8px; {{ r.placeStyle }}">{{ r.place }}</span>
+            </div>
+            <div style="font-size:17px; font-weight:700; color:#191f28; margin-bottom:12px;">{{ r.name }}</div>
+            <div style="display:flex; align-items:center; gap:10px; padding-top:12px; border-top:1px solid #f2f4f6;">
+              <span style="font-size:13px; color:#8b95a1; font-weight:600;">상대</span>
+              <div style="width:26px; height:26px; border-radius:8px; background:{{ r.oppColor }}; display:flex; align-items:center; justify-content:center;"><span style="font-size:12px; font-weight:800; color:#fff;">{{ r.oppInitial }}</span></div>
+              <span style="font-size:16px; font-weight:700; color:{{ r.oppNameColor }};">{{ r.oppName }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <!-- master schedule -->
+      <sc-if value="{{ scheduleIsMaster }}">
+      <div style="font-size:14px; color:#8b95a1; margin-bottom:14px;">전체 대진표예요. 타임 순서대로 진행하세요.</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <sc-for list="{{ masterScheduleRows }}" as="r" hint-placeholder-count="6">
+          <div style="background:#fff; border:1px solid #f2f4f6; border-radius:16px; padding:16px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+              <span style="font-size:13px; font-weight:800; color:#03b26c;">{{ r.time }}</span>
+              <span style="font-size:12px; font-weight:700; padding:4px 9px; border-radius:8px; {{ r.placeStyle }}">{{ r.place }}</span>
+            </div>
+            <div style="font-size:17px; font-weight:700; color:#191f28; margin-bottom:12px;">{{ r.name }}</div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px; padding-top:12px; border-top:1px solid #f2f4f6;">
+              <sc-for list="{{ r.pairs }}" as="p" hint-placeholder-count="3">
+                <span style="font-size:14px; font-weight:700; color:#4e5968; background:#f2f4f6; padding:6px 11px; border-radius:9px;">{{ p.a }} <span style="color:#b0b8c1;">vs</span> {{ p.b }}</span>
+              </sc-for>
+              <sc-if value="{{ r.pending }}">
+                <span style="font-size:14px; font-weight:600; color:#8b95a1;">순위 발표 후 결정</span>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <!-- rules -->
+      <div style="margin-top:16px; background:#fff; border:1px solid #f2f4f6; border-radius:16px; padding:16px;">
+        <div style="font-size:13px; font-weight:800; color:#6b7684; margin-bottom:10px;">안내사항</div>
+        <div style="display:flex; flex-direction:column; gap:9px;">
+          <div style="font-size:13px; color:#6b7684; line-height:1.6;">· 실내(강당) 종목은 <b style="color:#4e5968;">타임 1~4</b>, 야외(운동장) 종목은 <b style="color:#4e5968;">타임 5~6</b>입니다.</div>
+          <div style="font-size:13px; color:#6b7684; line-height:1.6;">· 각 게임 <b style="color:#03b26c;">승리 10점 · 패배 5점</b>, 6개 게임 누적으로 최종 순위가 결정돼요.</div>
+          <div style="font-size:13px; color:#6b7684; line-height:1.6;">· 타임 6(줄다리기) 상대는 타임 1~5 누적 순위 발표 후 진행자가 현장에서 정합니다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ TOAST ============ -->
+  <sc-if value="{{ toast }}">
+    <div style="position:fixed; bottom:34px; left:50%; z-index:50; background:rgba(25,31,40,.94); color:#fff; padding:14px 20px; border-radius:14px; font-size:15px; font-weight:600; animation:toastUp .25s ease; box-shadow:0 8px 24px rgba(0,0,0,.24); max-width:340px;">{{ toast }}</div>
+  </sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 390, &quot;height&quot;: 844}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const palette = ['#4b7bec','#f04452','#03b26c','#fe9800','#a234c7','#18a5a5','#faa131','#e42939'];
+    this.palette = palette;
+    // 미니 올림픽 대진표 (팀 번호 1~6 기준, 타임 1~5 상대팀 번호 / 타임6은 순위 매치)
+    this.matchups = [
+      [6, 5, 4, 3, 2, null],
+      [5, 3, 6, 4, 1, null],
+      [4, 2, 5, 1, 6, null],
+      [3, 6, 1, 2, 5, null],
+      [2, 1, 3, 6, 4, null],
+      [1, 4, 2, 5, 3, null],
+    ];
+    this.roulettePool = [10, -10, 20, -20, 30, -30];
+    this.state = {
+      screen: 'login',
+      codeInput: '', pinInput: '', loginError: '',
+      myTeamId: null,
+      managerGameId: null,
+      adminTab: 'scores',
+      adminGameId: null,
+      managerMatchKey: null,
+      toast: null,
+      matchStatus: { 'g1:1-6': 'done', 'g1:2-5': 'done', 'g1:3-4': 'done', 'g2:1-5': 'live' },
+      itemPoints: {}, // tid -> 남은 아이템 포인트 (기본 100)
+      itemBonus: {},  // tid -> 아이템으로 얻거나 잃은 점수
+      roulette: { phase: 'idle', landing: 0, result: null },
+      shopFrom: 'team',
+      teams: [
+        { id: 't1', name: '1팀', code: 'K7QX', color: palette[0] },
+        { id: 't2', name: '2팀', code: 'M2WD', color: palette[1] },
+        { id: 't3', name: '3팀', code: 'P9HL', color: palette[2] },
+        { id: 't4', name: '4팀', code: 'T4RB', color: palette[3] },
+        { id: 't5', name: '5팀', code: 'V6NC', color: palette[4] },
+        { id: 't6', name: '6팀', code: 'W8JZ', color: palette[5] },
+      ],
+      games: [
+        { id: 'g1', name: '지식 올림픽 퀴즈', place: '실내 (강당)' },
+        { id: 'g2', name: '컵쌓기 계주', place: '실내 (강당)' },
+        { id: 'g3', name: '신문지 서바이벌', place: '실내 (강당)' },
+        { id: 'g4', name: '훌라후프 계주', place: '실내 (강당)' },
+        { id: 'g5', name: '장애물 계주', place: '야외 (운동장)' },
+        { id: 'g6', name: '줄다리기 (순위 매치)', place: '야외 (운동장)' },
+      ],
+      scores: {
+        t1: { g1: 10, g2: 5,  g3: 10, g4: 5,  g5: 10, g6: 0 },
+        t2: { g1: 10, g2: 5,  g3: 5,  g4: 10, g5: 5,  g6: 0 },
+        t3: { g1: 10, g2: 10, g3: 10, g4: 10, g5: 10, g6: 0 },
+        t4: { g1: 5,  g2: 10, g3: 5,  g4: 5,  g5: 10, g6: 0 },
+        t5: { g1: 5,  g2: 10, g3: 5,  g4: 5,  g5: 5,  g6: 0 },
+        t6: { g1: 5,  g2: 5,  g3: 10, g4: 10, g5: 5,  g6: 0 },
+      },
+    };
+    this._toastTimer = null;
+  }
+
+  // ---------- helpers ----------
+  initial(name) { return (name || '?').trim().charAt(0) || '?'; }
+  getScore(tid, gid) { const t = this.state.scores[tid]; return (t && t[gid]) || 0; }
+  teamTotal(tid) { return this.state.games.reduce((s, g) => s + this.getScore(tid, g.id), 0) + this.getIB(tid); }
+  getIP(tid) { const v = this.state.itemPoints[tid]; return v === undefined ? 100 : v; }
+  getIB(tid) { return this.state.itemBonus[tid] || 0; }
+  gameTotal(gid) { return this.state.teams.reduce((s, t) => s + this.getScore(t.id, gid), 0); }
+
+  setScore(tid, gid, val) {
+    let v = Math.round(Number(String(val).replace(/[^0-9-]/g, '')) || 0);
+    if (v < 0) v = 0;
+    if (v > 99999) v = 99999;
+    this.setState(s => {
+      const scores = { ...s.scores, [tid]: { ...(s.scores[tid] || {}), [gid]: v } };
+      return { scores };
+    });
+  }
+
+  genCode() {
+    const abc = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const existing = new Set(this.state.teams.map(t => t.code));
+    let code;
+    do { code = Array.from({ length: 4 }, () => abc[Math.floor(Math.random() * abc.length)]).join(''); }
+    while (existing.has(code));
+    return code;
+  }
+
+  showToast(msg) {
+    this.setState({ toast: msg });
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => this.setState({ toast: null }), 1700);
+  }
+
+  ranked() {
+    const arr = this.state.teams.map(t => ({ id: t.id, name: t.name, color: t.color, initial: this.initial(t.name), total: this.teamTotal(t.id) }));
+    arr.sort((a, b) => b.total - a.total);
+    let rank = 0, prev = null;
+    arr.forEach((t, i) => { if (t.total !== prev) { rank = i + 1; prev = t.total; } t.rank = rank; });
+    return arr;
+  }
+
+  // ---------- nav / auth ----------
+  toLogin = () => this.setState({ screen: 'login', loginError: '', pinInput: '', myTeamId: null });
+  goStaff = () => this.setState({ screen: 'staffPin', loginError: '', pinInput: '' });
+  logout = () => this.toLogin();
+  onCodeInput = (e) => this.setState({ codeInput: e.target.value.toUpperCase(), loginError: '' });
+  onPinInput = (e) => this.setState({ pinInput: e.target.value.replace(/[^0-9]/g, ''), loginError: '' });
+  onCodeKey = (e) => { if (e.key === 'Enter') this.submitTeamCode(); };
+  onPinKey = (e) => { if (e.key === 'Enter') this.submitPin(); };
+
+  submitTeamCode = () => {
+    const code = (this.state.codeInput || '').trim().toUpperCase();
+    if (!code) { this.setState({ loginError: '팀 코드를 입력해 주세요.' }); return; }
+    const team = this.state.teams.find(t => t.code.toUpperCase() === code);
+    if (!team) { this.setState({ loginError: '없는 코드예요. 다시 확인해 주세요.' }); return; }
+    this.setState({ screen: 'team', myTeamId: team.id, loginError: '', codeInput: '' });
+  };
+
+  submitPin = () => {
+    const pin = this.state.pinInput || '';
+    if (pin === '1234') { this.setState({ screen: 'managerGames', loginError: '', pinInput: '' }); }
+    else if (pin === '9999') { this.setState({ screen: 'admin', adminTab: 'scores', loginError: '', pinInput: '' }); }
+    else { this.setState({ loginError: 'PIN이 올바르지 않아요.' }); }
+  };
+
+  backToManagerGames = () => this.setState({ screen: 'managerGames' });
+  backToManagerMatches = () => this.setState({ screen: 'managerMatches' });
+  openSchedule = () => this.setState({ screen: 'schedule', scheduleFrom: this.state.screen });
+  backFromSchedule = () => this.setState({ screen: this.state.scheduleFrom || 'login' });
+  openStatus = () => this.setState({ screen: 'status', statusFrom: this.state.screen });
+  backFromStatus = () => this.setState({ screen: this.state.statusFrom || 'managerGames' });
+  setMatchStatus(key, val) { this.setState(s => ({ matchStatus: { ...s.matchStatus, [key]: val } })); }
+
+  // ---------- 아이템 상점 ----------
+  openShop = () => this.setState({ screen: 'shop', shopFrom: this.state.screen, roulette: { phase: 'idle', landing: 0, result: null } });
+  backToShop = () => this.setState({ screen: 'shop', roulette: { phase: 'idle', landing: 0, result: null } });
+  backFromShop = () => this.setState({ screen: this.state.shopFrom || 'team' });
+
+  buyPlus10 = () => {
+    const tid = this.state.myTeamId; if (!tid) return;
+    if (this.getIP(tid) < 20) { this.showToast('포인트가 부족해요 (20P 필요)'); return; }
+    this.setState(s => ({
+      itemPoints: { ...s.itemPoints, [tid]: this.getIP(tid) - 20 },
+      itemBonus: { ...s.itemBonus, [tid]: this.getIB(tid) + 10 },
+    }));
+    this.showToast('🎉 +10점을 얻었어요!');
+  };
+
+  buyStandings = () => {
+    const tid = this.state.myTeamId; if (!tid) return;
+    if (this.getIP(tid) < 50) { this.showToast('포인트가 부족해요 (50P 필요)'); return; }
+    this.setState(s => ({ itemPoints: { ...s.itemPoints, [tid]: this.getIP(tid) - 50 }, screen: 'standings' }));
+  };
+  backFromStandings = () => this.setState({ screen: 'shop' });
+
+  openSwap = () => {
+    const tid = this.state.myTeamId; if (!tid) return;
+    if (this.getIP(tid) < 100) { this.showToast('포인트가 부족해요 (100P 필요)'); return; }
+    this.setState({ screen: 'swap' });
+  };
+  confirmSwap = (otherId) => {
+    const my = this.state.myTeamId; if (!my || otherId === my) return;
+    const other = this.state.teams.find(t => t.id === otherId);
+    if (!window.confirm((other ? other.name : '상대 팀') + '와 총점을 바꿀까요? 100P가 소모돼요.')) return;
+    const myT = this.teamTotal(my), otT = this.teamTotal(otherId);
+    this.setState(s => ({
+      itemPoints: { ...s.itemPoints, [my]: this.getIP(my) - 100 },
+      itemBonus: { ...s.itemBonus, [my]: this.getIB(my) + (otT - myT), [otherId]: this.getIB(otherId) + (myT - otT) },
+      screen: 'shop',
+    }));
+    this.showToast('🔄 ' + (other ? other.name : '상대 팀') + '와 점수를 바꿨어요!');
+  };
+  backFromSwap = () => this.setState({ screen: 'shop' });
+
+  openRoulette = () => {
+    const tid = this.state.myTeamId; if (!tid) return;
+    if (this.getIP(tid) < 10) { this.showToast('포인트가 부족해요 (10P 필요)'); return; }
+    this.setState({ screen: 'roulette', roulette: { phase: 'idle', landing: 0, result: null } });
+  };
+  spinRoulette = () => {
+    const tid = this.state.myTeamId; if (!tid) return;
+    if (this.state.roulette.phase === 'spinning') return;
+    if (this.getIP(tid) < 10) { this.showToast('포인트가 부족해요 (10P 필요)'); return; }
+    const pool = this.roulettePool;
+    const landing = 42 + Math.floor(Math.random() * pool.length);
+    const result = pool[landing % pool.length];
+    this.setState(s => ({
+      itemPoints: { ...s.itemPoints, [tid]: this.getIP(tid) - 10 },
+      roulette: { phase: 'reset', landing, result },
+    }));
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      this.setState(s => ({ roulette: { ...s.roulette, phase: 'spinning' } }));
+    }));
+    clearTimeout(this._spinTimer);
+    this._spinTimer = setTimeout(() => {
+      this.setState(s => ({
+        itemBonus: { ...s.itemBonus, [tid]: this.getIB(tid) + result },
+        roulette: { ...s.roulette, phase: 'done' },
+      }));
+      this.showToast((result > 0 ? '🎉 +' : '😵 ') + result + '점!');
+    }, 3300);
+  };
+
+  backToAdmin = () => this.setState({ screen: 'admin' });
+  toResults = () => {
+    if (this.state.teams.length === 0) { this.showToast('팀을 먼저 추가해 주세요.'); return; }
+    this.setState({ screen: 'results' });
+  };
+
+  // ---------- admin mutations ----------
+  addTeam = () => {
+    const idx = this.state.teams.length;
+    const id = 't' + Date.now();
+    const code = this.genCode();
+    this.setState(s => ({ teams: [...s.teams, { id, name: '새 팀 ' + (idx + 1), code, color: this.palette[idx % this.palette.length] }] }));
+    this.showToast('팀이 추가됐어요 · 코드 ' + code);
+  };
+  renameTeam(id, name) { this.setState(s => ({ teams: s.teams.map(t => t.id === id ? { ...t, name } : t) })); }
+  deleteTeam(id) {
+    this.setState(s => {
+      const scores = { ...s.scores }; delete scores[id];
+      const itemPoints = { ...s.itemPoints }; delete itemPoints[id];
+      const itemBonus = { ...s.itemBonus }; delete itemBonus[id];
+      return { teams: s.teams.filter(t => t.id !== id), scores, itemPoints, itemBonus, myTeamId: s.myTeamId === id ? null : s.myTeamId };
+    });
+  }
+  addGame = () => {
+    const idx = this.state.games.length;
+    const id = 'g' + Date.now();
+    this.setState(s => ({ games: [...s.games, { id, name: '새 게임 ' + (idx + 1), place: '' }] }));
+    this.showToast('게임이 추가됐어요');
+  };
+  renameGame(id, name) { this.setState(s => ({ games: s.games.map(g => g.id === id ? { ...g, name } : g) })); }
+  deleteGame(id) {
+    this.setState(s => {
+      const scores = {};
+      Object.keys(s.scores).forEach(tid => { const o = { ...s.scores[tid] }; delete o[id]; scores[tid] = o; });
+      const games = s.games.filter(g => g.id !== id);
+      const adminGameId = s.adminGameId === id ? (games[0] ? games[0].id : null) : s.adminGameId;
+      return { games, scores, adminGameId };
+    });
+  }
+  resetScores = () => {
+    if (!window.confirm('모든 점수와 아이템 포인트를 초기화할까요?')) return;
+    this.setState({ scores: {}, itemBonus: {}, itemPoints: {} });
+    this.showToast('점수를 초기화했어요');
+  };
+  resetAll = () => {
+    if (!window.confirm('팀·게임·점수를 모두 삭제할까요? 되돌릴 수 없어요.')) return;
+    this.setState({ teams: [], games: [], scores: {}, adminGameId: null, itemBonus: {}, itemPoints: {}, matchStatus: {} });
+    this.showToast('대회를 리셋했어요');
+  };
+
+  selectAdminTab(tab) { this.setState({ adminTab: tab }); }
+
+  // ---------- render ----------
+  renderVals() {
+    const s = this.state;
+    const screen = s.screen;
+    const activeGameId = s.adminGameId || (s.games[0] && s.games[0].id) || null;
+
+    const scoreRow = (gid) => (t, i) => ({
+      id: t.id, name: t.name, color: t.color, initial: this.initial(t.name),
+      score: this.getScore(t.id, gid),
+      dec: () => this.setScore(t.id, gid, this.getScore(t.id, gid) - 1),
+      inc: () => this.setScore(t.id, gid, this.getScore(t.id, gid) + 1),
+      onInput: (e) => this.setScore(t.id, gid, e.target.value),
+    });
+
+    const managerGameId = s.managerGameId || (s.games[0] && s.games[0].id) || null;
+    const managerGame = s.games.find(g => g.id === managerGameId);
+
+    const myTeam = s.teams.find(t => t.id === s.myTeamId);
+    const teamBreakdown = s.games.map(g => ({ name: g.name, label: this.getScore(s.myTeamId, g.id) + '점' }));
+    if (myTeam && this.getIB(myTeam.id) !== 0) {
+      const b = this.getIB(myTeam.id);
+      teamBreakdown.push({ name: '🎁 아이템 보너스', label: (b > 0 ? '+' : '') + b + '점' });
+    }
+
+    const tabDef = [
+      { id: 'scores', name: '점수' }, { id: 'teams', name: '팀' },
+      { id: 'games', name: '게임' }, { id: 'settings', name: '설정' },
+    ];
+    const tabBase = 'flex:1; padding:11px 0; border:none; border-radius:11px; font-size:15px; font-weight:700; cursor:pointer; transition:all .15s;';
+    const adminTabs = tabDef.map(t => ({
+      name: t.name,
+      style: t.id === s.adminTab ? tabBase + 'background:#191f28; color:#fff;' : tabBase + 'background:#f2f4f6; color:#8b95a1;',
+      select: () => this.selectAdminTab(t.id),
+    }));
+
+    const chipBase = 'flex-shrink:0; padding:9px 16px; border:none; border-radius:20px; font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap;';
+    const adminGameChips = s.games.map(g => ({
+      name: g.name,
+      style: g.id === activeGameId ? chipBase + 'background:#3182f6; color:#fff;' : chipBase + 'background:#f2f4f6; color:#6b7684;',
+      select: () => this.setState({ adminGameId: g.id }),
+    }));
+
+    const ranked = this.ranked();
+    const rankColors = { 1: '#ffd158', 2: '#c4ccd6', 3: '#e0965a' };
+    const rankedList = ranked.map(r => ({ ...r, rankColor: rankColors[r.rank] || '#6b7684' }));
+
+    // ---- 진행 순서(대진표) ----
+    const teamName = (num) => { const t = s.teams[num - 1]; return t ? t.name : num + '팀'; };
+    const teamColor = (num) => { const t = s.teams[num - 1]; return t ? t.color : '#8b95a1'; };
+    const myIdx = s.myTeamId ? s.teams.findIndex(t => t.id === s.myTeamId) : -1;
+    const scheduleIsTeam = myIdx >= 0 && myIdx < this.matchups.length;
+
+    const placeStyle = (place) => (place || '').indexOf('실내') === 0
+      ? 'background:#e6f7ef; color:#03b26c;' : 'background:#fff4e6; color:#e07800;';
+    const teamScheduleRows = scheduleIsTeam ? s.games.map((g, i) => {
+      const opp = this.matchups[myIdx][i];
+      return {
+        time: '타임 ' + (i + 1), name: g.name, place: g.place || '', placeStyle: placeStyle(g.place),
+        oppName: opp ? teamName(opp) : '순위 발표 후 결정',
+        oppColor: opp ? teamColor(opp) : '#8b95a1', oppInitial: opp ? this.initial(teamName(opp)) : '?',
+        oppNameColor: opp ? '#191f28' : '#8b95a1',
+      };
+    }) : [];
+
+    const masterScheduleRows = s.games.map((g, i) => {
+      const pairs = [];
+      if (i < 5) {
+        for (let t = 0; t < this.matchups.length; t++) {
+          const opp = this.matchups[t][i];
+          if (opp && t + 1 < opp) pairs.push({ a: teamName(t + 1), b: teamName(opp) });
+        }
+      }
+      return {
+        time: '타임 ' + (i + 1), name: g.name, place: g.place || '', placeStyle: placeStyle(g.place),
+        pairs, pending: pairs.length === 0,
+      };
+    });
+
+    // ---- 경기 현황 (매치 상태) ----
+    const stMeta = {
+      pending: { label: '진행전', color: '#8b95a1', dot: '#c4ccd6', on: 'background:#e5e8eb; color:#4e5968;' },
+      live: { label: '진행', color: '#e07800', dot: '#fe9800', on: 'background:#fff4e6; color:#e07800;' },
+      done: { label: '완료', color: '#03b26c', dot: '#03b26c', on: 'background:#e6f7ef; color:#03b26c;' },
+    };
+    const stOrder = ['pending', 'live', 'done'];
+    const segBase = 'flex:1; padding:9px 0; border:none; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer;';
+    const summary = { pending: 0, live: 0, done: 0 };
+    const statusGames = s.games.map((g, gi) => {
+      const matches = [];
+      if (gi < this.matchups.length - 1) {
+        for (let t = 0; t < this.matchups.length; t++) {
+          const opp = this.matchups[t][gi];
+          if (opp && t + 1 < opp) {
+            const a = t + 1, b = opp, key = g.id + ':' + a + '-' + b;
+            const cur = s.matchStatus[key] || 'pending';
+            summary[cur]++;
+            matches.push({
+              key, aName: teamName(a), bName: teamName(b),
+              aColor: teamColor(a), bColor: teamColor(b),
+              aInitial: this.initial(teamName(a)), bInitial: this.initial(teamName(b)),
+              badge: stMeta[cur].label, badgeColor: stMeta[cur].color, badgeDot: stMeta[cur].dot,
+              options: stOrder.map(o => ({
+                label: stMeta[o].label,
+                style: cur === o ? segBase + stMeta[o].on : segBase + 'background:transparent; color:#b0b8c1;',
+                select: () => this.setMatchStatus(key, o),
+              })),
+            });
+          }
+        }
+      }
+      return {
+        time: '타임 ' + (gi + 1), name: g.name, place: g.place || '', placeStyle: placeStyle(g.place),
+        matches, pending: matches.length === 0,
+      };
+    });
+    const statusSummary = [
+      { label: '진행전', n: summary.pending, color: '#8b95a1' },
+      { label: '진행', n: summary.live, color: '#e07800' },
+      { label: '완료', n: summary.done, color: '#03b26c' },
+    ];
+
+    // ---- 담당자: 게임 → 대진 선택 → 대진 상세 ----
+    const mGameIdx = s.games.findIndex(g => g.id === managerGameId);
+    const buildMatches = (gi) => {
+      const out = [];
+      if (gi >= 0 && gi < this.matchups.length - 1) {
+        for (let t = 0; t < this.matchups.length; t++) {
+          const opp = this.matchups[t][gi];
+          if (opp && t + 1 < opp) out.push({ a: t + 1, b: opp, key: s.games[gi].id + ':' + (t + 1) + '-' + opp });
+        }
+      }
+      return out;
+    };
+    const managerMatchList = buildMatches(mGameIdx);
+    const managerMatchCards = managerMatchList.map(m => {
+      const cur = s.matchStatus[m.key] || 'pending';
+      return {
+        aName: teamName(m.a), bName: teamName(m.b),
+        aColor: teamColor(m.a), bColor: teamColor(m.b),
+        aInitial: this.initial(teamName(m.a)), bInitial: this.initial(teamName(m.b)),
+        badge: stMeta[cur].label, badgeColor: stMeta[cur].color, badgeDot: stMeta[cur].dot,
+        pick: () => this.setState({ screen: 'managerMatch', managerMatchKey: m.key }),
+      };
+    });
+    const managerMatchNoMatches = mGameIdx >= 0 && managerMatchList.length === 0;
+
+    // detail
+    let mDetail = null;
+    if (s.managerMatchKey) {
+      const [gid, pair] = s.managerMatchKey.split(':');
+      const [aNum, bNum] = pair.split('-').map(Number);
+      const gm = s.games.find(g => g.id === gid);
+      const cur = s.matchStatus[s.managerMatchKey] || 'pending';
+      const teamAt = (num) => s.teams[num - 1];
+      const mkRow = (num) => {
+        const t = teamAt(num); if (!t) return null;
+        return {
+          id: t.id, name: t.name, color: t.color, initial: this.initial(t.name),
+          score: this.getScore(t.id, gid),
+          dec: () => this.setScore(t.id, gid, this.getScore(t.id, gid) - 1),
+          inc: () => this.setScore(t.id, gid, this.getScore(t.id, gid) + 1),
+          onInput: (e) => this.setScore(t.id, gid, e.target.value),
+        };
+      };
+      mDetail = {
+        gameName: gm ? gm.name : '', place: gm ? (gm.place || '') : '', placeStyle: placeStyle(gm ? gm.place : ''),
+        aName: teamName(aNum), bName: teamName(bNum),
+        statusLabel: stMeta[cur].label, statusColor: stMeta[cur].color, statusDot: stMeta[cur].dot,
+        statusOptions: stOrder.map(o => ({
+          label: stMeta[o].label,
+          style: cur === o ? segBase + stMeta[o].on : segBase + 'background:transparent; color:#b0b8c1;',
+          select: () => this.setMatchStatus(s.managerMatchKey, o),
+        })),
+        rows: [mkRow(aNum), mkRow(bNum)].filter(Boolean),
+      };
+    }
+
+    // ---- 아이템 상점 ----
+    const myIP = myTeam ? this.getIP(myTeam.id) : 0;
+    const shopItems = [
+      { id: 'plus', emoji: '➕', name: '점수 +10', desc: '우리 팀 점수를 즉시 10점 올려요', cost: 20, accent: '#03b26c', bg: '#e6f7ef', action: this.buyPlus10 },
+      { id: 'roul', emoji: '🎰', name: '행운의 룰렛', desc: '±10~30점, 돌려서 운에 맡겨요', cost: 10, accent: '#8b5cf6', bg: '#f3edff', action: this.openRoulette },
+      { id: 'peek', emoji: '👀', name: '전체 현황 보기', desc: '전 팀 순위를 한 번 열어봐요', cost: 50, accent: '#3182f6', bg: '#e8f3ff', action: this.buyStandings },
+      { id: 'swap', emoji: '🔄', name: '점수 바꾸기', desc: '다른 팀과 총점을 통째로 교환해요', cost: 100, accent: '#f04452', bg: '#ffeaec', action: this.openSwap },
+    ].map(it => ({ ...it, affordable: myIP >= it.cost, costLabel: it.cost + 'P', cardOpacity: myIP >= it.cost ? 1 : 0.5 }));
+
+    // 룰렛 릴
+    const rPool = this.roulettePool;
+    const rl = s.roulette;
+    const cellW = 84;
+    const reelLen = Math.max(14, rl.landing + 6);
+    const rouletteCells = Array.from({ length: reelLen }, (_, i) => {
+      const v = rPool[i % rPool.length];
+      return { label: (v > 0 ? '+' : '') + v, pos: v > 0, color: v > 0 ? '#03b26c' : '#f04452', bg: v > 0 ? '#e6f7ef' : '#ffeaec' };
+    });
+    const spinning = rl.phase === 'spinning';
+    const targetTx = -(rl.landing * cellW + cellW / 2);
+    const reelTx = (rl.phase === 'spinning' || rl.phase === 'done') ? targetTx : -(cellW / 2);
+    const reelStripStyle = 'position:absolute; left:50%; top:0; display:flex; will-change:transform;'
+      + 'transform:translateX(' + reelTx + 'px);'
+      + (spinning ? 'transition:transform 3.1s cubic-bezier(.15,.72,.16,1);' : 'transition:none;');
+    const rResult = rl.phase === 'done' ? rl.result : null;
+
+    // 점수 바꾸기 대상
+    const swapTargets = s.teams.filter(t => t.id !== s.myTeamId).map(t => ({
+      id: t.id, name: t.name, color: t.color, initial: this.initial(t.name), total: this.teamTotal(t.id),
+      pick: () => this.confirmSwap(t.id),
+    }));
+
+    return {
+      isLogin: screen === 'login', isStaffPin: screen === 'staffPin', isTeam: screen === 'team',
+      isManagerGames: screen === 'managerGames',
+      isShop: screen === 'shop', isRoulette: screen === 'roulette', isSwap: screen === 'swap', isStandings: screen === 'standings',
+      openShop: this.openShop, backFromShop: this.backFromShop, backToShop: this.backToShop,
+      backFromStandings: this.backFromStandings, backFromSwap: this.backFromSwap,
+      myItemPoints: myIP, shopItems, shopTeamName: myTeam ? myTeam.name : '',
+      openRoulette: this.openRoulette, spinRoulette: this.spinRoulette,
+      rouletteCells, reelStripStyle,
+      rouletteSpinning: spinning, rouletteIdle: rl.phase === 'idle' || rl.phase === 'reset',
+      rouletteDone: rl.phase === 'done',
+      rResult, rResultPos: rResult > 0,
+      rResultLabel: rResult != null ? (rResult > 0 ? '+' + rResult : '' + rResult) + '점' : '',
+      rResultColor: rResult > 0 ? '#03b26c' : '#f04452',
+      canSpinAgain: myIP >= 10, spinAgainOpacity: myIP >= 10 ? 1 : 0.5,
+      swapTargets,
+      isManagerMatches: screen === 'managerMatches', isManagerMatch: screen === 'managerMatch',
+      isAdmin: screen === 'admin', isResults: screen === 'results',
+      isSchedule: screen === 'schedule',
+      openSchedule: this.openSchedule, backFromSchedule: this.backFromSchedule,
+      scheduleIsTeam, scheduleIsMaster: screen === 'schedule' && !scheduleIsTeam,
+      scheduleTeamName: scheduleIsTeam ? s.teams[myIdx].name : '',
+      teamScheduleRows, masterScheduleRows,
+      isStatus: screen === 'status', openStatus: this.openStatus, backFromStatus: this.backFromStatus,
+      statusGames, statusSummary,
+      toast: s.toast, loginError: s.loginError || '',
+      codeInput: s.codeInput, pinInput: s.pinInput,
+      demoCode: (s.teams[0] && s.teams[0].code) || 'K7QX',
+
+      onCodeInput: this.onCodeInput, onPinInput: this.onPinInput,
+      onCodeKey: this.onCodeKey, onPinKey: this.onPinKey,
+      submitTeamCode: this.submitTeamCode, submitPin: this.submitPin,
+      goStaff: this.goStaff, toLogin: this.toLogin, logout: this.logout,
+
+      // team view
+      myTeamName: myTeam ? myTeam.name : '', myTeamColor: myTeam ? myTeam.color : '#3182f6',
+      myTeamInitial: myTeam ? this.initial(myTeam.name) : '?',
+      myTeamTotal: myTeam ? this.teamTotal(myTeam.id) : 0,
+      teamBreakdown,
+
+      // manager
+      noGames: s.games.length === 0,
+      managerGameCards: s.games.map(g => ({
+        name: g.name, sub: (g.place || '') + ' · 탭하여 대진 선택',
+        pick: () => this.setState({ screen: 'managerMatches', managerGameId: g.id }),
+      })),
+      managerGameName: managerGame ? managerGame.name : '',
+      managerMatchCards, managerMatchNoMatches,
+      mDetail,
+      backToManagerGames: this.backToManagerGames,
+      backToManagerMatches: this.backToManagerMatches,
+
+      // admin
+      adminTabs,
+      adminIsScores: s.adminTab === 'scores', adminIsTeams: s.adminTab === 'teams',
+      adminIsGames: s.adminTab === 'games', adminIsSettings: s.adminTab === 'settings',
+      adminGameChips,
+      adminScoreRows: s.teams.map(scoreRow(activeGameId)),
+      adminTeamRows: s.teams.map((t, i) => ({
+        id: t.id, name: t.name, color: t.color, code: t.code,
+        onName: (e) => this.renameTeam(t.id, e.target.value),
+        remove: () => this.deleteTeam(t.id),
+      })),
+      adminGameRows: s.games.map((g, i) => ({
+        id: g.id, name: g.name, num: i + 1,
+        onName: (e) => this.renameGame(g.id, e.target.value),
+        remove: () => this.deleteGame(g.id),
+      })),
+      addTeam: this.addTeam, addGame: this.addGame,
+      resetScores: this.resetScores, resetAll: this.resetAll,
+      toResults: this.toResults, backToAdmin: this.backToAdmin,
+
+      // results
+      rankedList,
+      hasWinner: ranked.length > 0 && ranked[0].total > 0,
+      winnerName: ranked[0] ? ranked[0].name : '',
+      podium: {
+        first: ranked[0] || null,
+        second: ranked[1] || null,
+        third: ranked[2] || null,
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>
