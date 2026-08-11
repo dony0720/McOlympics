@@ -1,10 +1,48 @@
-// Temporary placeholder - will be replaced in Task 12
+import { useScoreboard } from './hooks/useScoreboard';
+import { Toast } from './components/ui/Toast';
+import { LoginPage } from './pages/LoginPage';
+import { StaffPinPage } from './pages/StaffPinPage';
+import { TeamPage } from './pages/TeamPage';
+import { ManagerGamesPage } from './pages/manager/ManagerGamesPage';
+import { ManagerMatchesPage } from './pages/manager/ManagerMatchesPage';
+import { ManagerMatchPage } from './pages/manager/ManagerMatchPage';
+import { AdminPage } from './pages/admin/AdminPage';
+import { ResultsPage } from './pages/ResultsPage';
+import { ShopPage } from './pages/shop/ShopPage';
+import { RoulettePage } from './pages/shop/RoulettePage';
+import { SwapPage } from './pages/shop/SwapPage';
+import { StandingsPage } from './pages/shop/StandingsPage';
+import { StatusPage } from './pages/StatusPage';
+import { SchedulePage } from './pages/SchedulePage';
+import type { ScoreboardView } from './types';
+
+function renderPage(view: ScoreboardView) {
+  switch (view.screen) {
+    case 'login': return <LoginPage view={view} />;
+    case 'staffPin': return <StaffPinPage view={view} />;
+    case 'team': return <TeamPage view={view} />;
+    case 'managerGames': return <ManagerGamesPage view={view} />;
+    case 'managerMatches': return <ManagerMatchesPage view={view} />;
+    case 'managerMatch': return <ManagerMatchPage view={view} />;
+    case 'admin': return <AdminPage view={view} />;
+    case 'results': return <ResultsPage view={view} />;
+    case 'shop': return <ShopPage view={view} />;
+    case 'roulette': return <RoulettePage view={view} />;
+    case 'swap': return <SwapPage view={view} />;
+    case 'standings': return <StandingsPage view={view} />;
+    case 'status': return <StatusPage view={view} />;
+    case 'schedule': return <SchedulePage view={view} />;
+    default: return null;
+  }
+}
+
 export default function App() {
+  const { view } = useScoreboard();
   return (
-    <div className="flex min-h-screen items-center justify-center bg-app">
-      <div className="rounded-[16px] bg-white px-[24px] py-[20px] text-center shadow-lg">
-        <h1 className="text-[20px] font-bold text-ink">레크레이션 점수판</h1>
-        <p className="mt-[8px] text-[14px] text-muted">구현 진행 중...</p>
+    <div className="flex min-h-screen items-stretch justify-center bg-app">
+      <div className="relative flex min-h-screen w-full max-w-[430px] flex-col overflow-hidden bg-white">
+        {renderPage(view)}
+        <Toast message={view.toast} />
       </div>
     </div>
   );

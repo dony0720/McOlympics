@@ -21,8 +21,8 @@
 | 8   | ✅ 완료   | `feat: 관리자 대시보드 및 점수/팀/게임/설정 탭 추가` `3fd96fe` | `src/pages/admin/AdminPage.tsx`, `ScoresTab.tsx`, `TeamsTab.tsx`, `GamesTab.tsx`, `SettingsTab.tsx`                                           |
 | 9   | ✅ 완료   | `feat: 포디움 및 전체 순위 결과 페이지 추가` `0dec5fd`   | `src/pages/ResultsPage.tsx`                                                                                                                   |
 | 10  | ✅ 완료   | `feat: 아이템 상점, 룰렛, 스왑, 순위 페이지 추가` `01924ce` | `src/pages/shop/ShopPage.tsx`, `RoulettePage.tsx`, `SwapPage.tsx`, `StandingsPage.tsx`                                                        |
-| 11  | 🟨 진행중 | `feat: 현황판 및 일정 페이지 추가`                       | `src/pages/StatusPage.tsx`, `src/pages/SchedulePage.tsx`                                                                                      |
-| 12  | ⬜ 대기   | `feat: 전체 점수판 앱 통합 및 스모크 테스트 추가`         | `src/App.tsx`, `src/App.test.tsx`, `vitest.config.ts`                                                                                         |
+| 11  | ✅ 완료   | `feat: 현황판 및 일정 페이지 추가` `9cd2446`             | `src/pages/StatusPage.tsx`, `src/pages/SchedulePage.tsx`                                                                                      |
+| 12  | ✅ 완료   | `feat: 전체 점수판 앱 통합 및 스모크 테스트 추가`         | `src/App.tsx`, `src/App.test.tsx`, `vitest.config.ts`, `src/test/setup.ts`                                                                    |
 
 ## 커밋별 상세
 
