@@ -72,7 +72,7 @@ export interface ShopItem {
 export interface RouletteCell { label: string; positive: boolean; }
 
 export interface SwapTarget {
-  id: string; name: string; color: string; initial: string; total: number; pick: () => void;
+  id: string; name: string; color: string; initial: string; pick: () => void;
 }
 
 export interface ScheduleTeamRow {

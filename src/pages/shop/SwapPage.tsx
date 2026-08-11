@@ -22,7 +22,9 @@ export function SwapPage({ view }: PageProps) {
           >
             <TeamAvatar color={t.color} initial={t.initial} size={36} />
             <span className="flex-1 text-[16px] font-bold text-ink">{t.name}</span>
-            <span className="text-[16px] font-extrabold text-ink" style={{ fontVariantNumeric: 'tabular-nums' }}>{t.total}점</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M9 5l7 7-7 7" stroke="#b0b8c1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </button>
         ))}
       </div>

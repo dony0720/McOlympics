@@ -470,7 +470,6 @@ export function useScoreboard(): { view: ScoreboardView } {
       .filter((t) => t.id !== s.myTeamId)
       .map((t) => ({
         id: t.id, name: t.name, color: t.color, initial: initial(t.name),
-        total: teamTotal(s.scores, s.games, s.itemBonus, t.id),
         pick: () => confirmSwap(t.id),
       }));
 
