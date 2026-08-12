@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# SPA: 화면 전환이 클라이언트 상태로만 이뤄지지만, 안전하게 모든 경로를 index.html로 보낸다.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
