@@ -1,6 +1,6 @@
 # 로드맵 (커밋 단위 계획)
 
-이 문서는 `docs/superpowers/plans/2026-08-10-recreation-scoreboard-react-port.md`의 12개 Task를 **커밋 단위**로 쪼갠 실행 로드맵이다. 각 항목은 정확히 하나의 커밋에 대응한다.
+이 문서는 `docs/superpowers/plans/2026-08-10-recreation-scoreboard-react-port.md`의 12개 Task와, 그 이후 진행하는 `Firebase 실시간 DB 연동` 계획(Task 13~17)을 **커밋 단위**로 쪼갠 실행 로드맵이다. 각 항목은 정확히 하나의 커밋에 대응한다.
 
 - 상태 표시: `⬜ 대기` → `🟨 진행중` → `✅ 완료`
 - 작업 순서: 이 문서의 위에서 아래 순서를 따른다 (뒤 커밋은 앞 커밋에 의존).
@@ -22,7 +22,13 @@
 | 9   | ✅ 완료   | `feat: 포디움 및 전체 순위 결과 페이지 추가` `0dec5fd`   | `src/pages/ResultsPage.tsx`                                                                                                                   |
 | 10  | ✅ 완료   | `feat: 아이템 상점, 룰렛, 스왑, 순위 페이지 추가` `01924ce` | `src/pages/shop/ShopPage.tsx`, `RoulettePage.tsx`, `SwapPage.tsx`, `StandingsPage.tsx`                                                        |
 | 11  | ✅ 완료   | `feat: 현황판 및 일정 페이지 추가` `9cd2446`             | `src/pages/StatusPage.tsx`, `src/pages/SchedulePage.tsx`                                                                                      |
-| 12  | ✅ 완료   | `feat: 전체 점수판 앱 통합 및 스모크 테스트 추가`         | `src/App.tsx`, `src/App.test.tsx`, `vitest.config.ts`, `src/test/setup.ts`                                                                    |
+| 12  | ✅ 완료   | `feat: 전체 점수판 앱 통합 및 스모크 테스트 추가` `91a0f69` | `src/App.tsx`, `src/App.test.tsx`, `vitest.config.ts`, `src/test/setup.ts`                                                                    |
+| 12.1 | ✅ 완료  | `fix: 점수 바꾸기 화면에서 상대 팀 총점 노출 제거` `c2c1d71` | `src/pages/shop/SwapPage.tsx`, `src/types/view.ts`, `src/hooks/useScoreboard.ts`                                                              |
+| 13  | 🟨 진행중 | `feat: Firebase SDK 연동`                              | `src/lib/firebase.ts`, `src/vite-env.d.ts`, `.env.example`, `.gitignore`, `package.json`                                                      |
+| 14  | 🟨 진행중 | `refactor: 점수판 상태를 로컬 UI/공유 상태로 분리`       | `src/types/state.ts`                                                                                                                           |
+| 15  | 🟨 진행중 | `feat: Firestore 대회 데이터 훅 및 보안 규칙 추가`       | `src/hooks/useCompetitionData.ts`, `src/data/initialState.ts`, `firestore.rules`, `firebase.json`, `firestore.indexes.json`                   |
+| 16  | 🟨 진행중 | `refactor: useScoreboard를 Firestore 실시간 연동으로 재작성` | `src/hooks/useScoreboard.ts`, `src/App.tsx`                                                                                                   |
+| 17  | 🟨 진행중 | `test: Firestore 데이터 훅 목 추가 및 테스트 오프라인화` | `src/test/mockCompetitionData.ts`, `src/App.test.tsx`, `src/test/setup.ts`                                                                    |
 
 ## 커밋별 상세
 
@@ -77,6 +83,36 @@ git 저장소 초기화, 기존 Vite 스캐폴드 + 계획 문서 + `CLAUDE.md`�
 ### 12. App 통합 + QA (Task 12)
 
 `App.tsx`를 라우터로 교체, 스모크 테스트 4종, Playwright 시각 QA, `tsc --noEmit` + `npm run build` 통과 확인.
+
+### 12.1. 점수 바꾸기 화면 총점 비노출 (사용자 요청 수정)
+
+`SwapPage`에서 상대 팀의 현재 총점을 보여주지 않도록 변경 (다른 팀 점수를 미리 알고 스왑을 결정하지 못하게 하는 의도적 UX 변경).
+
+---
+
+## Firebase 실시간 DB 연동 (`docs/superpowers/plans` 외부, 별도 계획서: `firebase 실시간 db 연동` plan)
+
+목표: 브라우저 메모리(`useState`)에만 있던 상태를 Firestore로 옮겨, 팀/담당자/관리자가 서로 다른 기기에서 동시에 같은 점수·대진 상태를 실시간으로 보고 수정할 수 있게 한다. PIN/팀 코드 검증은 지금처럼 클라이언트에서 유지하고, Firebase는 익명 인증 + 데이터 저장소로만 사용한다.
+
+### 13. Firebase SDK 연동 (Task 13)
+
+`firebase` 패키지 설치, `src/lib/firebase.ts`(앱 초기화, Firestore/Auth 인스턴스, 익명 로그인 `authReady`), `.env.example`/`.gitignore`(`VITE_FIREBASE_*` 키), `src/vite-env.d.ts`(env 타입).
+
+### 14. 상태 타입 분리 (Task 14)
+
+`src/types/state.ts`의 `ScoreboardState`를 기기별 `LocalUiState`(화면/입력값/네비게이션/룰렛 애니메이션)와, 모든 기기가 공유하는 `SharedState`(teams/games/scores/matchStatus/itemPoints/itemBonus)로 분리.
+
+### 15. Firestore 데이터 훅 (Task 15)
+
+`src/hooks/useCompetitionData.ts`: `competitions/main` 문서 구독(`onSnapshot`) + 문서가 없으면 시드 데이터로 최초 생성(`runTransaction`) + 쓰기 액션(`setScore`/`setMatchStatus`는 `updateDoc`+dot-path, `addTeam`/`deleteTeam`/`addGame`/`deleteGame`/`confirmSwap`은 `runTransaction`, `applyItemBenefit`은 `increment()`). `src/data/initialState.ts`를 시드용 `createSeedSharedState()` + 로컬 기본값 `createInitialLocalUiState()`로 분리. `firestore.rules`(`request.auth != null`), `firebase.json`, `firestore.indexes.json` 추가.
+
+### 16. `useScoreboard` Firestore 연동 재작성 (Task 16)
+
+로컬 UI `useState(LocalUiState)` + `useCompetitionData()`(공유 `SharedState`)를 합쳐 기존과 동일한 `ScoreboardView`를 파생. `myTeamId`는 `localStorage`에 저장해 새로고침해도 로그인이 유지되도록 함. `App.tsx`에 최초 로딩/에러 화면 추가.
+
+### 17. 테스트 오프라인화 (Task 17)
+
+`src/test/mockCompetitionData.ts`: 실제 Firestore 없이 동일한 쓰기 동작을 메모리에서 재현하는 `useCompetitionData` 대체 구현. `src/App.test.tsx`에서 `vi.mock`으로 교체. `src/test/setup.ts`에 `localStorage` 초기화 추가(로그인 상태가 테스트 간 새는 것 방지). **실시간 동기화 수동 QA(두 브라우저 창에서 한쪽 점수 변경 → 다른 쪽 반영 확인)는 실제 Firebase 프로젝트 config를 `.env`에 채운 뒤 사람이 직접 확인해야 한다.**
 
 ## 로드맵 갱신 규칙
 
