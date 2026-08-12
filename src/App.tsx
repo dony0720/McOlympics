@@ -37,11 +37,17 @@ function renderPage(view: ScoreboardView) {
 }
 
 export default function App() {
-  const { view } = useScoreboard();
+  const { view, loading, error } = useScoreboard();
   return (
     <div className="flex min-h-screen items-stretch justify-center bg-app">
       <div className="relative flex min-h-screen w-full max-w-[430px] flex-col overflow-hidden bg-white">
-        {renderPage(view)}
+        {loading ? (
+          <div className="flex flex-1 items-center justify-center text-[15px] text-muted">불러오는 중...</div>
+        ) : error ? (
+          <div className="flex flex-1 items-center justify-center px-8 text-center text-[15px] text-danger">{error}</div>
+        ) : (
+          renderPage(view)
+        )}
         <Toast message={view.toast} />
       </div>
     </div>
