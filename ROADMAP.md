@@ -24,11 +24,11 @@
 | 11  | ✅ 완료   | `feat: 현황판 및 일정 페이지 추가` `9cd2446`             | `src/pages/StatusPage.tsx`, `src/pages/SchedulePage.tsx`                                                                                      |
 | 12  | ✅ 완료   | `feat: 전체 점수판 앱 통합 및 스모크 테스트 추가` `91a0f69` | `src/App.tsx`, `src/App.test.tsx`, `vitest.config.ts`, `src/test/setup.ts`                                                                    |
 | 12.1 | ✅ 완료  | `fix: 점수 바꾸기 화면에서 상대 팀 총점 노출 제거` `c2c1d71` | `src/pages/shop/SwapPage.tsx`, `src/types/view.ts`, `src/hooks/useScoreboard.ts`                                                              |
-| 13  | 🟨 진행중 | `feat: Firebase SDK 연동`                              | `src/lib/firebase.ts`, `src/vite-env.d.ts`, `.env.example`, `.gitignore`, `package.json`                                                      |
-| 14  | 🟨 진행중 | `refactor: 점수판 상태를 로컬 UI/공유 상태로 분리`       | `src/types/state.ts`                                                                                                                           |
-| 15  | 🟨 진행중 | `feat: Firestore 대회 데이터 훅 및 보안 규칙 추가`       | `src/hooks/useCompetitionData.ts`, `src/data/initialState.ts`, `firestore.rules`, `firebase.json`, `firestore.indexes.json`                   |
-| 16  | 🟨 진행중 | `refactor: useScoreboard를 Firestore 실시간 연동으로 재작성` | `src/hooks/useScoreboard.ts`, `src/App.tsx`                                                                                                   |
-| 17  | 🟨 진행중 | `test: Firestore 데이터 훅 목 추가 및 테스트 오프라인화` | `src/test/mockCompetitionData.ts`, `src/App.test.tsx`, `src/test/setup.ts`                                                                    |
+| 13  | ✅ 완료   | `feat: Firebase SDK 연동` `661d2be`                     | `src/lib/firebase.ts`, `src/vite-env.d.ts`, `.env.example`, `.gitignore`, `package.json`                                                      |
+| 14  | ✅ 완료   | `refactor: 점수판 상태를 로컬 UI/공유 상태로 분리` `e9137d2` | `src/types/state.ts`                                                                                                                       |
+| 15  | ✅ 완료   | `feat: Firestore 대회 데이터 훅 및 보안 규칙 추가` `fee0477` | `src/hooks/useCompetitionData.ts`, `src/data/initialState.ts`, `firestore.rules`, `firebase.json`, `firestore.indexes.json`               |
+| 16  | ✅ 완료   | `refactor: useScoreboard를 Firestore 실시간 연동으로 재작성` `9c5d305` | `src/hooks/useScoreboard.ts`, `src/App.tsx`                                                                                       |
+| 17  | ✅ 완료   | `test: Firestore 데이터 훅 목 추가 및 테스트 오프라인화` `d337a6e` | `src/test/mockCompetitionData.ts`, `src/App.test.tsx`, `src/test/setup.ts`                                                          |
 
 ## 커밋별 상세
 
@@ -112,7 +112,9 @@ git 저장소 초기화, 기존 Vite 스캐폴드 + 계획 문서 + `CLAUDE.md`�
 
 ### 17. 테스트 오프라인화 (Task 17)
 
-`src/test/mockCompetitionData.ts`: 실제 Firestore 없이 동일한 쓰기 동작을 메모리에서 재현하는 `useCompetitionData` 대체 구현. `src/App.test.tsx`에서 `vi.mock`으로 교체. `src/test/setup.ts`에 `localStorage` 초기화 추가(로그인 상태가 테스트 간 새는 것 방지). **실시간 동기화 수동 QA(두 브라우저 창에서 한쪽 점수 변경 → 다른 쪽 반영 확인)는 실제 Firebase 프로젝트 config를 `.env`에 채운 뒤 사람이 직접 확인해야 한다.**
+`src/test/mockCompetitionData.ts`: 실제 Firestore 없이 동일한 쓰기 동작을 메모리에서 재현하는 `useCompetitionData` 대체 구현. `src/App.test.tsx`에서 `vi.mock`으로 교체. `src/test/setup.ts`에 `localStorage` 초기화 추가(로그인 상태가 테스트 간 새는 것 방지).
+
+**실시간 동기화 QA (완료)**: 실제 Firebase 프로젝트(`.env` 값 채움, Firestore Database 생성, 익명 인증 활성화, `firestore.rules` 게시)에 연결한 뒤, Playwright로 완전히 분리된 두 브라우저 컨텍스트(관리자 탭 / 팀 탭)를 열어 확인. 관리자 탭에서 점수를 변경하면 새로고침 없이 3초 내 팀 탭에 자동 반영됨을 확인했다 (QA 스크립트는 검증 후 삭제).
 
 ## 로드맵 갱신 규칙
 
