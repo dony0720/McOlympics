@@ -1,6 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import App from './App';
+
+// 실제 Firestore 없이 테스트를 동기적으로 실행하기 위해 데이터 훅을 대체한다.
+vi.mock('./hooks/useCompetitionData', () => import('./test/mockCompetitionData'));
 
 describe('App', () => {
   it('renders the login page by default', () => {
