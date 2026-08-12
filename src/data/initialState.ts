@@ -32,7 +32,9 @@ export function createSeedSharedState(): SharedState {
       t6: { g1: 5, g2: 5, g3: 10, g4: 10, g5: 5, g6: 0 },
     },
     matchStatus: { 'g1:1-6': 'done', 'g1:2-5': 'done', 'g1:3-4': 'done', 'g2:1-5': 'live' },
-    itemPoints: {},
+    // 화면에는 "필드 없으면 100P"로 보여주지만(useScoreboard의 getIP), Firestore increment()는
+    // 없는 필드를 0에서부터 깎기 때문에 반드시 모든 팀에 명시적으로 100을 심어둬야 한다.
+    itemPoints: { t1: 100, t2: 100, t3: 100, t4: 100, t5: 100, t6: 100 },
     itemBonus: {},
   };
 }
