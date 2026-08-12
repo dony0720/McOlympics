@@ -1,0 +1,11 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // PIN/팀 코드 검증은 클라이언트에서 처리한다. 여기서는 앱을 통해 익명 로그인한
+    // 기기인지만 확인해서, Firestore 콘솔/외부 요청으로 직접 접근하는 것만 막는다.
+    match /competitions/{competitionId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

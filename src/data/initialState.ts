@@ -1,23 +1,12 @@
 import { PALETTE } from '../lib/scoring';
-import type { ScoreboardState } from '../types';
+import type { LocalUiState, SharedState } from '../types';
 
-export function createInitialState(): ScoreboardState {
+/**
+ * Firestore `competitions/main` 문서가 아직 없을 때 한 번만 채워 넣는 시드 데이터.
+ * (원본 dc.html 데모 데이터와 동일)
+ */
+export function createSeedSharedState(): SharedState {
   return {
-    screen: 'login',
-    codeInput: '', pinInput: '', loginError: '',
-    myTeamId: null,
-    managerGameId: null,
-    managerMatchKey: null,
-    adminTab: 'scores',
-    adminGameId: null,
-    toast: null,
-    matchStatus: { 'g1:1-6': 'done', 'g1:2-5': 'done', 'g1:3-4': 'done', 'g2:1-5': 'live' },
-    itemPoints: {},
-    itemBonus: {},
-    roulette: { phase: 'idle', landing: 0, result: null },
-    shopFrom: 'team',
-    scheduleFrom: 'login',
-    statusFrom: 'managerGames',
     teams: [
       { id: 't1', name: '1팀', code: 'K7QX', color: PALETTE[0] },
       { id: 't2', name: '2팀', code: 'M2WD', color: PALETTE[1] },
@@ -42,5 +31,26 @@ export function createInitialState(): ScoreboardState {
       t5: { g1: 5, g2: 10, g3: 5, g4: 5, g5: 5, g6: 0 },
       t6: { g1: 5, g2: 5, g3: 10, g4: 10, g5: 5, g6: 0 },
     },
+    matchStatus: { 'g1:1-6': 'done', 'g1:2-5': 'done', 'g1:3-4': 'done', 'g2:1-5': 'live' },
+    itemPoints: {},
+    itemBonus: {},
+  };
+}
+
+/** 이 기기의 로컬 UI 상태 기본값. 새로고침해도 유지될 필요가 없다. */
+export function createInitialLocalUiState(): LocalUiState {
+  return {
+    screen: 'login',
+    codeInput: '', pinInput: '', loginError: '',
+    myTeamId: null,
+    managerGameId: null,
+    managerMatchKey: null,
+    adminTab: 'scores',
+    adminGameId: null,
+    toast: null,
+    roulette: { phase: 'idle', landing: 0, result: null },
+    shopFrom: 'team',
+    scheduleFrom: 'login',
+    statusFrom: 'managerGames',
   };
 }
