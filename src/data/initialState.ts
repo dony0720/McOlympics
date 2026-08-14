@@ -16,12 +16,12 @@ export function createSeedSharedState(): SharedState {
       { id: 't6', name: '6팀', code: 'W8JZ', color: PALETTE[5] },
     ],
     games: [
-      { id: 'g1', name: '지식 올림픽 퀴즈', place: '실내 (강당)' },
-      { id: 'g2', name: '컵쌓기 계주', place: '실내 (강당)' },
-      { id: 'g3', name: '신문지 서바이벌', place: '실내 (강당)' },
-      { id: 'g4', name: '훌라후프 계주', place: '실내 (강당)' },
-      { id: 'g5', name: '장애물 계주', place: '야외 (운동장)' },
-      { id: 'g6', name: '줄다리기 (순위 매치)', place: '야외 (운동장)' },
+      { id: 'g1', name: '몸으로 말해요', place: '실내 (강당)' },
+      { id: 'g2', name: '가위바위보', place: '실내 (강당)' },
+      { id: 'g3', name: '잡아라 고깔 쥐돌이', place: '실내 (강당)' },
+      { id: 'g4', name: '훅! 가는 종이컵', place: '실내 (강당)' },
+      { id: 'g5', name: '물폭탄 대작전', place: '야외 (운동장)' },
+      { id: 'g6', name: '할리갈리', place: '실내 (강당)' },
     ],
     scores: {
       t1: { g1: 10, g2: 5, g3: 10, g4: 5, g5: 10, g6: 0 },
