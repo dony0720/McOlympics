@@ -15,6 +15,7 @@ const STATUS_LABEL: Record<MatchState, string> = { pending: '진행전', live: '
 const STATUS_ORDER: MatchState[] = ['pending', 'live', 'done'];
 const TEAM_ID_STORAGE_KEY = 'mcolympics.myTeamId';
 const DEFAULT_ITEM_POINTS = 100;
+const SCORE_STEP = 10;
 const EMPTY_SHARED: SharedState = {
   teams: [], games: [], scores: {}, matchStatus: {}, itemPoints: {}, itemBonus: {},
 };
@@ -251,8 +252,8 @@ export function useScoreboard(): { view: ScoreboardView; loading: boolean; error
     const scoreRowFor = (gid: string) => (t: (typeof s.teams)[number]) => ({
       id: t.id, name: t.name, color: t.color, initial: initial(t.name),
       score: getScore(s.scores, t.id, gid),
-      dec: () => setScore(t.id, gid, getScore(s.scores, t.id, gid) - 1),
-      inc: () => setScore(t.id, gid, getScore(s.scores, t.id, gid) + 1),
+      dec: () => setScore(t.id, gid, getScore(s.scores, t.id, gid) - SCORE_STEP),
+      inc: () => setScore(t.id, gid, getScore(s.scores, t.id, gid) + SCORE_STEP),
       onInput: (e: ChangeEvent<HTMLInputElement>) => setScore(t.id, gid, e.target.value),
     });
 
@@ -373,8 +374,8 @@ export function useScoreboard(): { view: ScoreboardView; loading: boolean; error
         return {
           id: t.id, name: t.name, color: t.color, initial: initial(t.name),
           score: getScore(s.scores, t.id, gid),
-          dec: () => setScore(t.id, gid, getScore(s.scores, t.id, gid) - 1),
-          inc: () => setScore(t.id, gid, getScore(s.scores, t.id, gid) + 1),
+          dec: () => setScore(t.id, gid, getScore(s.scores, t.id, gid) - SCORE_STEP),
+          inc: () => setScore(t.id, gid, getScore(s.scores, t.id, gid) + SCORE_STEP),
           onInput: (e: ChangeEvent<HTMLInputElement>) => setScore(t.id, gid, e.target.value),
         };
       };
