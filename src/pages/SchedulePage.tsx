@@ -54,10 +54,11 @@ export function SchedulePage({ view }: PageProps) {
                   <div className="flex flex-wrap gap-2 border-t border-line pt-3">
                     {r.pairs.map((p, i) => (
                       <span key={i} className="rounded-[9px] bg-line px-[11px] py-[6px] text-[14px] font-bold text-muted-3">
+                        <span className="mr-[6px] text-[12px] font-extrabold text-brand">{p.round}</span>
                         {p.a} <span className="text-muted-4">vs</span> {p.b}
                       </span>
                     ))}
-                    {r.pending && <span className="text-[14px] font-semibold text-muted">순위 발표 후 결정</span>}
+                    {r.isGroupGame && <span className="text-[14px] font-semibold text-muted">전 팀 다 같이 진행</span>}
                   </div>
                 </div>
               ))}
@@ -69,13 +70,16 @@ export function SchedulePage({ view }: PageProps) {
           <div className="mb-[10px] text-[13px] font-extrabold text-muted-2">안내사항</div>
           <div className="flex flex-col gap-[9px]">
             <div className="text-[13px] leading-[1.6] text-muted-2">
-              · 실내(강당) 종목은 <b className="text-muted-3">타임 1~4</b>, 야외(운동장) 종목은 <b className="text-muted-3">타임 5~6</b>입니다.
+              · <b className="text-muted-3">1부</b>는 몸으로 말해요를 전 팀이 다 같이 진행해요.
             </div>
             <div className="text-[13px] leading-[1.6] text-muted-2">
-              · 각 게임 <b className="text-brand">승리 10점 · 패배 5점</b>, 6개 게임 누적으로 최종 순위가 결정돼요.
+              · <b className="text-muted-3">2부</b>는 실내(강당) 3개 종목을 동시에 열어요. 라운드마다 내 상대와 종목이 바뀌니 표를 확인하고 이동하세요.
             </div>
             <div className="text-[13px] leading-[1.6] text-muted-2">
-              · 타임 6(줄다리기) 상대는 타임 1~5 누적 순위 발표 후 진행자가 현장에서 정합니다.
+              · <b className="text-muted-3">3부</b>는 2부를 모두 마친 뒤 야외(운동장) 2개 종목을 동시에 열어요. 부스가 2개라 라운드마다 2팀은 쉬어요.
+            </div>
+            <div className="text-[13px] leading-[1.6] text-muted-2">
+              · 각 게임 <b className="text-brand">승리 20점 · 패배 10점</b>, 6개 게임 누적 점수와 아이템 보너스로 최종 순위가 결정돼요.
             </div>
           </div>
         </div>

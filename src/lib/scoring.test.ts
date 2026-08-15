@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import {
   initial, getScore, teamTotal, clampScore, ranked, genCode,
-  MATCHUPS, buildMatches, ROULETTE_POOL, PALETTE,
+  GAME_SCHEDULE, GAME_PHASES, buildMatches, findTeamMatch, isGroupGame, phaseOf,
+  ROULETTE_POOL, PALETTE,
 } from './scoring';
 
 describe('initial', () => {
@@ -81,27 +82,67 @@ describe('genCode', () => {
 });
 
 describe('buildMatches', () => {
-  it('matches the reference matchStatus seed keys for time 1 (gi=0)', () => {
-    // reference initial state has matchStatus keys 'g1:1-6','g1:2-5','g1:3-4' for time 1
-    expect(buildMatches(0, 'g1')).toEqual([
-      { a: 1, b: 6, key: 'g1:1-6' },
-      { a: 2, b: 5, key: 'g1:2-5' },
-      { a: 3, b: 4, key: 'g1:3-4' },
-    ]);
+  it('returns no matches for game 1, which the whole field plays together', () => {
+    expect(buildMatches(0, 'g1')).toEqual([]);
+    expect(isGroupGame(0)).toBe(true);
   });
-  it('matches the reference matchStatus seed key for time 2 (gi=1)', () => {
-    // reference initial state has matchStatus key 'g2:1-5' for time 2
-    expect(buildMatches(1, 'g2')).toContainEqual({ a: 1, b: 5, key: 'g2:1-5' });
+  it('builds keys as "<gameId>:<lower>-<higher>"', () => {
+    expect(buildMatches(1, 'g2')).toContainEqual({ a: 1, b: 5, round: 1, key: 'g2:1-5' });
   });
-  it('returns no matches for the last (rank-match) time slot', () => {
-    expect(buildMatches(MATCHUPS.length - 1, 'g6')).toEqual([]);
+  it('returns no matches for a game with no schedule entry', () => {
+    expect(buildMatches(GAME_SCHEDULE.length, 'g99')).toEqual([]);
+    expect(buildMatches(-1, 'g0')).toEqual([]);
+  });
+});
+
+describe('findTeamMatch', () => {
+  it('reports the opponent and round from either side of a pair', () => {
+    expect(findTeamMatch(1, 1)).toEqual({ a: 1, b: 5, round: 1, opp: 5 });
+    expect(findTeamMatch(1, 5)).toEqual({ a: 1, b: 5, round: 1, opp: 1 });
+  });
+  it('returns null when the team has no match in that game', () => {
+    expect(findTeamMatch(0, 1)).toBeNull();
+  });
+});
+
+describe('GAME_SCHEDULE', () => {
+  const scheduledGames = GAME_SCHEDULE.map((matches, i) => ({ i, matches })).filter((g) => g.matches.length);
+
+  it('lets every team play every scheduled game exactly once', () => {
+    for (const { matches } of scheduledGames) {
+      const played = matches.flatMap((m) => [m.a, m.b]).sort();
+      expect(played).toEqual([1, 2, 3, 4, 5, 6]);
+    }
+  });
+
+  it('keeps each round free of team collisions so parallel booths can run', () => {
+    for (const phase of GAME_PHASES) {
+      for (const round of [1, 2, 3]) {
+        const playing = phase.flatMap((gi) =>
+          GAME_SCHEDULE[gi].filter((m) => m.round === round).flatMap((m) => [m.a, m.b]),
+        );
+        expect(new Set(playing).size).toBe(playing.length);
+      }
+    }
+  });
+
+  it('pairs 13 of the 15 possible team combinations', () => {
+    const all = scheduledGames.flatMap((g) => g.matches.map((m) => `${m.a}-${m.b}`));
+    expect(new Set(all).size).toBe(13);
+    expect(all.length - new Set(all).size).toBe(2);
+  });
+
+  it('opens the indoor booths only after the group game', () => {
+    expect(GAME_PHASES).toEqual([[0], [1, 2, 3], [4, 5]]);
+    expect(phaseOf(0)).toBe(1);
+    expect(phaseOf(3)).toBe(2);
+    expect(phaseOf(5)).toBe(3);
+    expect(phaseOf(99)).toBeNull();
   });
 });
 
 describe('constants', () => {
-  it('exposes the 6x6 matchup table and 6-value roulette pool', () => {
-    expect(MATCHUPS).toHaveLength(6);
-    expect(MATCHUPS.every(row => row.length === 6)).toBe(true);
+  it('exposes the roulette pool and palette', () => {
     expect(ROULETTE_POOL).toEqual([10, -10, 20, -20, 30, -30]);
     expect(PALETTE).toHaveLength(8);
   });

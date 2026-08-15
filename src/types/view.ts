@@ -17,11 +17,20 @@ export interface ScoreRow {
 export interface ManagerGameCard { name: string; sub: string; pick: () => void; }
 
 export interface ManagerMatchCard {
+  round: string;
   aName: string; bName: string;
   aColor: string; bColor: string;
   aInitial: string; bInitial: string;
   badge: string; badgeColor: MatchState;
   pick: () => void;
+}
+
+/** 대진 없이 전 팀이 다 같이 진행하는 게임에서, 담당자가 6팀 점수를 한 화면에서 입력한다. */
+export interface ManagerGroupGame {
+  statusLabel: string;
+  statusColor: MatchState;
+  statusOptions: StatusOption[];
+  rows: ScoreRow[];
 }
 
 export interface StatusOption {
@@ -80,21 +89,25 @@ export interface ScheduleTeamRow {
   oppName: string; oppColor: string; oppInitial: string; hasOpponent: boolean;
 }
 
-export interface SchedulePair { a: string; b: string; }
+export interface SchedulePair { a: string; b: string; round: string; }
 export interface MasterScheduleRow {
   time: string; name: string; place: string; isIndoor: boolean;
-  pairs: SchedulePair[]; pending: boolean;
+  pairs: SchedulePair[]; isGroupGame: boolean;
 }
 
 export interface StatusMatch {
-  key: string; aName: string; bName: string; aColor: string; bColor: string;
+  key: string; round: string;
+  aName: string; bName: string; aColor: string; bColor: string;
   aInitial: string; bInitial: string;
   badge: string; badgeColor: MatchState;
   options: StatusOption[];
 }
+export interface StatusGroup {
+  badge: string; badgeColor: MatchState; options: StatusOption[];
+}
 export interface StatusGame {
   time: string; name: string; place: string; isIndoor: boolean;
-  matches: StatusMatch[]; pending: boolean;
+  matches: StatusMatch[]; group: StatusGroup | null;
 }
 export interface StatusSummaryItem { label: string; n: number; color: MatchState; }
 
@@ -123,7 +136,7 @@ export interface ScoreboardView {
   managerGameCards: ManagerGameCard[];
   managerGameName: string;
   managerMatchCards: ManagerMatchCard[];
-  managerMatchNoMatches: boolean;
+  managerGroupGame: ManagerGroupGame | null;
   mDetail: MatchDetail | null;
   backToManagerGames: () => void;
   backToManagerMatches: () => void;

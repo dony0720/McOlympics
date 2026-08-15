@@ -1,10 +1,7 @@
 import { PALETTE } from '../lib/scoring';
 import type { LocalUiState, SharedState } from '../types';
 
-/**
- * Firestore `competitions/main` 문서가 아직 없을 때 한 번만 채워 넣는 시드 데이터.
- * (원본 dc.html 데모 데이터와 동일)
- */
+/** Firestore `competitions/main` 문서가 아직 없을 때 한 번만 채워 넣는 시드 데이터. */
 export function createSeedSharedState(): SharedState {
   return {
     teams: [
@@ -21,17 +18,10 @@ export function createSeedSharedState(): SharedState {
       { id: 'g3', name: '잡아라 고깔 쥐돌이', place: '실내 (강당)' },
       { id: 'g4', name: '훅! 가는 종이컵', place: '실내 (강당)' },
       { id: 'g5', name: '물폭탄 대작전', place: '야외 (운동장)' },
-      { id: 'g6', name: '할리갈리', place: '실내 (강당)' },
+      { id: 'g6', name: '할리갈리', place: '야외 (운동장)' },
     ],
-    scores: {
-      t1: { g1: 10, g2: 5, g3: 10, g4: 5, g5: 10, g6: 0 },
-      t2: { g1: 10, g2: 5, g3: 5, g4: 10, g5: 5, g6: 0 },
-      t3: { g1: 10, g2: 10, g3: 10, g4: 10, g5: 10, g6: 0 },
-      t4: { g1: 5, g2: 10, g3: 5, g4: 5, g5: 10, g6: 0 },
-      t5: { g1: 5, g2: 10, g3: 5, g4: 5, g5: 5, g6: 0 },
-      t6: { g1: 5, g2: 5, g3: 10, g4: 10, g5: 5, g6: 0 },
-    },
-    matchStatus: { 'g1:1-6': 'done', 'g1:2-5': 'done', 'g1:3-4': 'done', 'g2:1-5': 'live' },
+    scores: {},
+    matchStatus: {},
     // 화면에는 "필드 없으면 100P"로 보여주지만(useScoreboard의 getIP), Firestore increment()는
     // 없는 필드를 0에서부터 깎기 때문에 반드시 모든 팀에 명시적으로 100을 심어둬야 한다.
     itemPoints: { t1: 100, t2: 100, t3: 100, t4: 100, t5: 100, t6: 100 },

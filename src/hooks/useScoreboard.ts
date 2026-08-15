@@ -4,8 +4,9 @@ import {
 import { createInitialLocalUiState } from '../data/initialState';
 import { useCompetitionData } from './useCompetitionData';
 import {
-  MATCHUPS, ROULETTE_POOL,
-  buildMatches, clampScore, getScore, initial, ranked, teamTotal,
+  ROULETTE_POOL, SCHEDULED_TEAM_COUNT,
+  buildMatches, clampScore, findTeamMatch, getScore, groupMatchKey, initial,
+  isGroupGame, phaseOf, ranked, teamTotal,
 } from '../lib/scoring';
 import type {
   AdminTab, LocalUiState, MatchState, Screen, SharedState, ScoreboardView,
@@ -287,58 +288,77 @@ export function useScoreboard(): { view: ScoreboardView; loading: boolean; error
     const teamName = (num: number) => s.teams[num - 1]?.name || `${num}팀`;
     const teamColor = (num: number) => s.teams[num - 1]?.color || '#8b95a1';
     const myIdx = ui.myTeamId ? s.teams.findIndex((t) => t.id === ui.myTeamId) : -1;
-    const scheduleIsTeam = myIdx >= 0 && myIdx < MATCHUPS.length;
+    const scheduleIsTeam = myIdx >= 0 && myIdx < SCHEDULED_TEAM_COUNT;
+
+    const phaseLabel = (i: number) => {
+      const phase = phaseOf(i);
+      return phase ? `${phase}부` : `게임 ${i + 1}`;
+    };
 
     const teamScheduleRows = scheduleIsTeam
       ? s.games.map((g, i) => {
-          const opp = MATCHUPS[myIdx][i];
+          const base = { name: g.name, place: g.place || '', isIndoor: isIndoor(g.place) };
+          if (isGroupGame(i)) {
+            return {
+              ...base, time: `${phaseLabel(i)} · 전체 진행`,
+              oppName: '전 팀 다 같이', oppColor: '#8b95a1', oppInitial: '전', hasOpponent: false,
+            };
+          }
+          const match = findTeamMatch(i, myIdx + 1);
+          if (!match) {
+            return {
+              ...base, time: phaseLabel(i),
+              oppName: '대진 미정', oppColor: '#8b95a1', oppInitial: '?', hasOpponent: false,
+            };
+          }
           return {
-            time: `타임 ${i + 1}`, name: g.name, place: g.place || '', isIndoor: isIndoor(g.place),
-            oppName: opp ? teamName(opp) : '순위 발표 후 결정',
-            oppColor: opp ? teamColor(opp) : '#8b95a1',
-            oppInitial: opp ? initial(teamName(opp)) : '?',
-            hasOpponent: Boolean(opp),
+            ...base, time: `${phaseLabel(i)} ${match.round}라운드`,
+            oppName: teamName(match.opp), oppColor: teamColor(match.opp),
+            oppInitial: initial(teamName(match.opp)), hasOpponent: true,
           };
         })
       : [];
 
-    const masterScheduleRows = s.games.map((g, i) => {
-      const pairs: { a: string; b: string }[] = [];
-      if (i < 5) {
-        for (let t = 0; t < MATCHUPS.length; t++) {
-          const opp = MATCHUPS[t][i];
-          if (opp && t + 1 < opp) pairs.push({ a: teamName(t + 1), b: teamName(opp) });
-        }
-      }
-      return {
-        time: `타임 ${i + 1}`, name: g.name, place: g.place || '', isIndoor: isIndoor(g.place),
-        pairs, pending: pairs.length === 0,
-      };
-    });
+    const masterScheduleRows = s.games.map((g, i) => ({
+      time: phaseLabel(i), name: g.name, place: g.place || '', isIndoor: isIndoor(g.place),
+      pairs: buildMatches(i, g.id).map((m) => ({
+        a: teamName(m.a), b: teamName(m.b), round: `${m.round}R`,
+      })),
+      isGroupGame: isGroupGame(i),
+    }));
 
     // ---- status board ----
     const summary: Record<MatchState, number> = { pending: 0, live: 0, done: 0 };
+    const statusOptionsFor = (key: string, cur: MatchState) => STATUS_ORDER.map((o) => ({
+      value: o, label: STATUS_LABEL[o], active: cur === o,
+      select: () => setMatchStatus(key, o),
+    }));
+
     const statusGames = s.games.map((g, gi) => {
-      const matches: ScoreboardView['statusGames'][number]['matches'] = [];
-      if (gi < MATCHUPS.length - 1) {
-        buildMatches(gi, g.id).forEach(({ a, b, key }) => {
-          const cur = s.matchStatus[key] || 'pending';
-          summary[cur]++;
-          matches.push({
-            key, aName: teamName(a), bName: teamName(b),
-            aColor: teamColor(a), bColor: teamColor(b),
-            aInitial: initial(teamName(a)), bInitial: initial(teamName(b)),
-            badge: STATUS_LABEL[cur], badgeColor: cur,
-            options: STATUS_ORDER.map((o) => ({
-              value: o, label: STATUS_LABEL[o], active: cur === o,
-              select: () => setMatchStatus(key, o),
-            })),
-          });
-        });
+      const matches = buildMatches(gi, g.id).map(({ a, b, key, round }) => {
+        const cur = s.matchStatus[key] || 'pending';
+        summary[cur]++;
+        return {
+          key, round: `${round}라운드`,
+          aName: teamName(a), bName: teamName(b),
+          aColor: teamColor(a), bColor: teamColor(b),
+          aInitial: initial(teamName(a)), bInitial: initial(teamName(b)),
+          badge: STATUS_LABEL[cur], badgeColor: cur,
+          options: statusOptionsFor(key, cur),
+        };
+      });
+
+      let group: ScoreboardView['statusGames'][number]['group'] = null;
+      if (isGroupGame(gi)) {
+        const key = groupMatchKey(g.id);
+        const cur = s.matchStatus[key] || 'pending';
+        summary[cur]++;
+        group = { badge: STATUS_LABEL[cur], badgeColor: cur, options: statusOptionsFor(key, cur) };
       }
+
       return {
-        time: `타임 ${gi + 1}`, name: g.name, place: g.place || '', isIndoor: isIndoor(g.place),
-        matches, pending: matches.length === 0,
+        time: phaseLabel(gi), name: g.name, place: g.place || '', isIndoor: isIndoor(g.place),
+        matches, group,
       };
     });
     const statusSummary: ScoreboardView['statusSummary'] = [
@@ -353,6 +373,7 @@ export function useScoreboard(): { view: ScoreboardView; loading: boolean; error
     const managerMatchCards = managerMatchList.map((m) => {
       const cur = s.matchStatus[m.key] || 'pending';
       return {
+        round: `${m.round}라운드`,
         aName: teamName(m.a), bName: teamName(m.b),
         aColor: teamColor(m.a), bColor: teamColor(m.b),
         aInitial: initial(teamName(m.a)), bInitial: initial(teamName(m.b)),
@@ -360,7 +381,20 @@ export function useScoreboard(): { view: ScoreboardView; loading: boolean; error
         pick: () => setUi((prev) => ({ ...prev, screen: 'managerMatch', managerMatchKey: m.key })),
       };
     });
-    const managerMatchNoMatches = mGameIdx >= 0 && managerMatchList.length === 0;
+
+    let managerGroupGame: ScoreboardView['managerGroupGame'] = null;
+    if (mGameIdx >= 0 && managerGame && isGroupGame(mGameIdx)) {
+      const key = groupMatchKey(managerGame.id);
+      const cur = s.matchStatus[key] || 'pending';
+      managerGroupGame = {
+        statusLabel: STATUS_LABEL[cur], statusColor: cur,
+        statusOptions: STATUS_ORDER.map((o) => ({
+          value: o, label: STATUS_LABEL[o], active: cur === o,
+          select: () => setMatchStatus(key, o),
+        })),
+        rows: s.teams.map(scoreRowFor(managerGame.id)),
+      };
+    }
 
     let mDetail: ScoreboardView['mDetail'] = null;
     if (ui.managerMatchKey) {
@@ -448,12 +482,13 @@ export function useScoreboard(): { view: ScoreboardView; loading: boolean; error
       teamBreakdown,
 
       noGames: s.games.length === 0,
-      managerGameCards: s.games.map((g) => ({
-        name: g.name, sub: `${g.place || ''} · 탭하여 대진 선택`,
+      managerGameCards: s.games.map((g, i) => ({
+        name: g.name,
+        sub: `${g.place || ''} · ${isGroupGame(i) ? '탭하여 점수 입력' : '탭하여 대진 선택'}`,
         pick: () => setUi((prev) => ({ ...prev, screen: 'managerMatches', managerGameId: g.id })),
       })),
       managerGameName: managerGame?.name || '',
-      managerMatchCards, managerMatchNoMatches, mDetail,
+      managerMatchCards, managerGroupGame, mDetail,
       backToManagerGames, backToManagerMatches,
 
       adminTabs,

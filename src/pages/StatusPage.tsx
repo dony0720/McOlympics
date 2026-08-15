@@ -36,12 +36,24 @@ export function StatusPage({ view }: PageProps) {
               </div>
               <div className="mb-[14px] text-[17px] font-bold text-ink">{g.name}</div>
 
-              {g.pending && <div className="py-[6px] text-[14px] font-semibold text-muted">순위 발표 후 대진 확정</div>}
+              {g.group && (
+                <div>
+                  <div className="mb-[9px] flex items-center gap-2">
+                    <span className="text-[15px] font-bold text-ink">전 팀 다 같이 진행</span>
+                    <span className="ml-auto flex items-center gap-[5px]">
+                      <span className="h-[7px] w-[7px] rounded-full" style={{ backgroundColor: BADGE_DOT[g.group.badgeColor] }} />
+                      <span className="text-[13px] font-bold" style={{ color: BADGE_COLOR[g.group.badgeColor] }}>{g.group.badge}</span>
+                    </span>
+                  </div>
+                  <SegmentedControl options={g.group.options} />
+                </div>
+              )}
 
               <div className="flex flex-col gap-4">
                 {g.matches.map((m) => (
                   <div key={m.key}>
                     <div className="mb-[9px] flex items-center gap-2">
+                      <span className="text-[12px] font-extrabold text-brand">{m.round}</span>
                       <TeamAvatar color={m.aColor} initial={m.aInitial} size={24} />
                       <span className="text-[15px] font-bold text-ink">{m.aName}</span>
                       <span className="text-[13px] font-bold text-muted-4">vs</span>
