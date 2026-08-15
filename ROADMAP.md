@@ -29,6 +29,11 @@
 | 15  | ✅ 완료   | `feat: Firestore 대회 데이터 훅 및 보안 규칙 추가` `fee0477` | `src/hooks/useCompetitionData.ts`, `src/data/initialState.ts`, `firestore.rules`, `firebase.json`, `firestore.indexes.json`               |
 | 16  | ✅ 완료   | `refactor: useScoreboard를 Firestore 실시간 연동으로 재작성` `9c5d305` | `src/hooks/useScoreboard.ts`, `src/App.tsx`                                                                                       |
 | 17  | ✅ 완료   | `test: Firestore 데이터 훅 목 추가 및 테스트 오프라인화` `d337a6e` | `src/test/mockCompetitionData.ts`, `src/App.test.tsx`, `src/test/setup.ts`                                                          |
+| 18  | ✅ 완료   | `chore: Netlify 배포 설정 추가` `bf90872`                | `netlify.toml`                                                                                                                                |
+| 19  | ✅ 완료   | `fix: 시드 데이터에 팀별 아이템 포인트 100 명시` `fe0d05b` | `src/data/initialState.ts`                                                                                                                   |
+| 20  | ✅ 완료   | `feat: 시드 게임 목록을 실제 진행 게임 이름으로 확정` `3e1d539` | `src/data/initialState.ts`                                                                                                              |
+| 21  | ✅ 완료   | `feat: 점수 +/- 버튼 입력 단위를 10점으로 변경` `7916304` | `src/hooks/useScoreboard.ts`                                                                                                                 |
+| 22  | ✅ 완료   | `feat: 동시 진행 라운드 방식에 맞게 대진표 재구성` `8dafc74` | `src/lib/scoring.ts`, `src/lib/scoring.test.ts`, `src/hooks/useScoreboard.ts`, `src/types/view.ts`, `src/pages/SchedulePage.tsx`, `src/pages/StatusPage.tsx`, `src/pages/manager/ManagerMatchesPage.tsx`, `src/data/initialState.ts`, `src/manager.test.tsx` |
 
 ## 커밋별 상세
 
@@ -115,6 +120,22 @@ git 저장소 초기화, 기존 Vite 스캐폴드 + 계획 문서 + `CLAUDE.md`�
 `src/test/mockCompetitionData.ts`: 실제 Firestore 없이 동일한 쓰기 동작을 메모리에서 재현하는 `useCompetitionData` 대체 구현. `src/App.test.tsx`에서 `vi.mock`으로 교체. `src/test/setup.ts`에 `localStorage` 초기화 추가(로그인 상태가 테스트 간 새는 것 방지).
 
 **실시간 동기화 QA (완료)**: 실제 Firebase 프로젝트(`.env` 값 채움, Firestore Database 생성, 익명 인증 활성화, `firestore.rules` 게시)에 연결한 뒤, Playwright로 완전히 분리된 두 브라우저 컨텍스트(관리자 탭 / 팀 탭)를 열어 확인. 관리자 탭에서 점수를 변경하면 새로고침 없이 3초 내 팀 탭에 자동 반영됨을 확인했다 (QA 스크립트는 검증 후 삭제).
+
+### 18~21. 배포 및 실제 운영 데이터 반영
+
+`netlify.toml`(빌드 명령·SPA 리다이렉트)로 Netlify 자동 배포 구성. 아이템 상점에서 보유 포인트가 음수(-10P)가 되던 버그를 시드에 팀별 100P를 명시해 해결(화면은 필드가 없으면 100P로 보여주지만 Firestore `increment()`는 없는 필드를 0에서 깎기 때문). 게임 이름을 실제 진행 종목으로 확정하고, 점수 +/- 버튼 단위를 10점으로 변경.
+
+### 22. 동시 진행 라운드 대진표 (Task 18)
+
+실제 진행 방식(1부 몸으로 말해요 전체 진행 → 2부 실내 3부스 동시 → 3부 야외 2부스 동시)에 맞춰 대진 구조를 재구성.
+
+- `MATCHUPS` 2차원 배열을 상대 팀과 라운드를 함께 담는 `GAME_SCHEDULE` 하나로 통합하고, 동시에 여는 게임 묶음을 `GAME_PHASES`로 분리.
+- 대진 없는 게임(빈 배열)은 "전 팀 다 같이 진행"으로 취급. 담당자가 6팀 점수를 한 화면에서 입력하고 진행 상태는 `<gameId>:all` 키 하나로 관리한다.
+- `buildMatches`/`masterScheduleRows`/`statusGames`에 박혀 있던 "마지막 게임은 대진 없음"(`i < 5`, `MATCHUPS.length - 1`) 하드코딩 제거. 원본의 줄다리기 순위 매치 잔재로, 할리갈리 점수 입력이 막혀 있던 원인이었다.
+- 일정표·현황판·담당자 화면에 라운드 표기 추가, 안내문을 1~3부 구성과 승리 20점·패배 10점 기준으로 교체.
+- 시드의 데모 점수와 무효해진 경기 상태 키를 비움.
+
+**대진표 근거**: 부스를 동시에 돌리면 6팀 15개 조합을 전부 성사시킬 수 없다. 실내 3라운드가 9개 조합을 쓰고 나면 남는 6개가 항상 삼각형 두 개(1-4-6, 2-3-5 꼴)가 되어 야외 두 게임의 완전 매칭으로 쪼개지지 않기 때문이다. 720가지 배치를 전수 탐색해 13개 조합 성사(재대결 2회)가 최대임을 확인했고, 그중 재대결이 가장 멀리 떨어지는 배치를 채택했다. 1-6과 4-5는 만나지 않고, 1-5와 4-6은 두 번 만난다. `src/lib/scoring.test.ts`에서 라운드 내 팀 충돌 없음·게임별 전 팀 1경기·13개 조합 성사를 검증한다.
 
 ## 로드맵 갱신 규칙
 
