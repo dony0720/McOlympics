@@ -35,6 +35,7 @@
 | 21  | ✅ 완료   | `feat: 점수 +/- 버튼 입력 단위를 10점으로 변경` `7916304` | `src/hooks/useScoreboard.ts`                                                                                                                 |
 | 22  | ✅ 완료   | `feat: 동시 진행 라운드 방식에 맞게 대진표 재구성` `8dafc74` | `src/lib/scoring.ts`, `src/lib/scoring.test.ts`, `src/hooks/useScoreboard.ts`, `src/types/view.ts`, `src/pages/SchedulePage.tsx`, `src/pages/StatusPage.tsx`, `src/pages/manager/ManagerMatchesPage.tsx`, `src/data/initialState.ts`, `src/manager.test.tsx` |
 | 23  | ✅ 완료   | `fix: 로그인 화면에서 팀 코드·PIN 노출하던 데모 안내 제거` `85c40af` | `src/pages/LoginPage.tsx`, `src/types/view.ts`, `src/hooks/useScoreboard.ts`                                                |
+| 24  | ✅ 완료   | `fix: 로그인 입력창 플레이스홀더에서 실제 팀 코드 제거` `7be119e` | `src/pages/LoginPage.tsx`, `src/App.test.tsx`, `src/manager.test.tsx`                                                          |
 
 ## 커밋별 상세
 
@@ -141,6 +142,10 @@ git 저장소 초기화, 기존 Vite 스캐폴드 + 계획 문서 + `CLAUDE.md`�
 ### 23. 로그인 화면 데모 안내 제거
 
 원본 프로토타입의 데모용 안내 박스가 로그인 화면 하단에 남아 있어 1팀 팀 코드와 담당자 PIN(1234)·관리자 PIN(9999)이 그대로 보였다. 참가자가 관리자로 들어가 점수를 고칠 수 있어 제거하고, 이 박스에서만 쓰던 `demoCode` 뷰 필드도 함께 정리했다. PIN 값 자체는 원본과 동일하게 유지한다.
+
+### 24. 플레이스홀더 팀 코드 제거
+
+입력창 예시가 `예: K7QX`로, 1팀의 실제 코드였다. "영문/숫자 4자리"라는 형식 힌트는 남기되 어느 팀 코드와도 겹치지 않는 `예: ABCD`로 교체. 이로써 화면에 실제 팀 코드를 노출하는 곳은 없다(`initialState.ts`의 시드 값은 데이터 자체이므로 유지).
 
 ## 로드맵 갱신 규칙
 
