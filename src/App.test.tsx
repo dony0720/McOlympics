@@ -13,7 +13,7 @@ describe('App', () => {
 
   it('logs a team in with a valid code and shows the team page', () => {
     render(<App />);
-    const input = screen.getByPlaceholderText('예: K7QX');
+    const input = screen.getByPlaceholderText('예: ABCD');
     fireEvent.change(input, { target: { value: 'K7QX' } });
     fireEvent.click(screen.getByText('입장하기'));
     expect(screen.getByText('우리 팀 점수')).toBeInTheDocument();
@@ -21,7 +21,7 @@ describe('App', () => {
 
   it('shows an error for an invalid team code', () => {
     render(<App />);
-    const input = screen.getByPlaceholderText('예: K7QX');
+    const input = screen.getByPlaceholderText('예: ABCD');
     fireEvent.change(input, { target: { value: 'ZZZZ' } });
     fireEvent.click(screen.getByText('입장하기'));
     expect(screen.getByText('없는 코드예요. 다시 확인해 주세요.')).toBeInTheDocument();

@@ -22,7 +22,7 @@ export function LoginPage({ view }: PageProps) {
           value={view.codeInput}
           onChange={view.onCodeInput}
           onKeyDown={view.onCodeKey}
-          placeholder="예: K7QX"
+          placeholder="예: ABCD"
           maxLength={6}
           className="w-full rounded-[14px] border-none bg-line px-[18px] py-[17px] text-[22px] font-bold uppercase tracking-[6px] text-ink outline-none focus:bg-white focus:shadow-[inset_0_0_0_1.6px_#03b26c]"
         />

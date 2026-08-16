@@ -51,7 +51,7 @@ describe('담당자 점수 입력 흐름', () => {
 describe('팀 일정표', () => {
   it('라운드와 상대 팀을 함께 보여준다', () => {
     render(<App />);
-    fireEvent.change(screen.getByPlaceholderText('예: K7QX'), { target: { value: 'K7QX' } });
+    fireEvent.change(screen.getByPlaceholderText('예: ABCD'), { target: { value: 'K7QX' } });
     fireEvent.click(screen.getByText('입장하기'));
     fireEvent.click(screen.getByRole('button', { name: '🏅 진행 순서' }));
 
