@@ -34,6 +34,7 @@
 | 20  | ✅ 완료   | `feat: 시드 게임 목록을 실제 진행 게임 이름으로 확정` `3e1d539` | `src/data/initialState.ts`                                                                                                              |
 | 21  | ✅ 완료   | `feat: 점수 +/- 버튼 입력 단위를 10점으로 변경` `7916304` | `src/hooks/useScoreboard.ts`                                                                                                                 |
 | 22  | ✅ 완료   | `feat: 동시 진행 라운드 방식에 맞게 대진표 재구성` `8dafc74` | `src/lib/scoring.ts`, `src/lib/scoring.test.ts`, `src/hooks/useScoreboard.ts`, `src/types/view.ts`, `src/pages/SchedulePage.tsx`, `src/pages/StatusPage.tsx`, `src/pages/manager/ManagerMatchesPage.tsx`, `src/data/initialState.ts`, `src/manager.test.tsx` |
+| 23  | ✅ 완료   | `fix: 로그인 화면에서 팀 코드·PIN 노출하던 데모 안내 제거` `85c40af` | `src/pages/LoginPage.tsx`, `src/types/view.ts`, `src/hooks/useScoreboard.ts`                                                |
 
 ## 커밋별 상세
 
@@ -136,6 +137,10 @@ git 저장소 초기화, 기존 Vite 스캐폴드 + 계획 문서 + `CLAUDE.md`�
 - 시드의 데모 점수와 무효해진 경기 상태 키를 비움.
 
 **대진표 근거**: 부스를 동시에 돌리면 6팀 15개 조합을 전부 성사시킬 수 없다. 실내 3라운드가 9개 조합을 쓰고 나면 남는 6개가 항상 삼각형 두 개(1-4-6, 2-3-5 꼴)가 되어 야외 두 게임의 완전 매칭으로 쪼개지지 않기 때문이다. 720가지 배치를 전수 탐색해 13개 조합 성사(재대결 2회)가 최대임을 확인했고, 그중 재대결이 가장 멀리 떨어지는 배치를 채택했다. 1-6과 4-5는 만나지 않고, 1-5와 4-6은 두 번 만난다. `src/lib/scoring.test.ts`에서 라운드 내 팀 충돌 없음·게임별 전 팀 1경기·13개 조합 성사를 검증한다.
+
+### 23. 로그인 화면 데모 안내 제거
+
+원본 프로토타입의 데모용 안내 박스가 로그인 화면 하단에 남아 있어 1팀 팀 코드와 담당자 PIN(1234)·관리자 PIN(9999)이 그대로 보였다. 참가자가 관리자로 들어가 점수를 고칠 수 있어 제거하고, 이 박스에서만 쓰던 `demoCode` 뷰 필드도 함께 정리했다. PIN 값 자체는 원본과 동일하게 유지한다.
 
 ## 로드맵 갱신 규칙
 
