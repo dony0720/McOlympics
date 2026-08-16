@@ -117,7 +117,6 @@ export interface ScoreboardView {
   loginError: string;
   codeInput: string;
   pinInput: string;
-  demoCode: string;
   onCodeInput: (e: ChangeEvent<HTMLInputElement>) => void;
   onPinInput: (e: ChangeEvent<HTMLInputElement>) => void;
   onCodeKey: (e: KeyboardEvent<HTMLInputElement>) => void;

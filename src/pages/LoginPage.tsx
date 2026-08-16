@@ -40,13 +40,6 @@ export function LoginPage({ view }: PageProps) {
         >
           담당자 · 관리자 로그인 →
         </button>
-        <div className="mt-[14px] rounded-[14px] border border-line bg-surface px-4 py-[14px]">
-          <div className="text-[12px] font-bold tracking-[0.3px] text-muted">데모 안내</div>
-          <div className="mt-[6px] text-[13px] leading-[1.7] text-muted-2">
-            팀 코드 <b className="text-ink">{view.demoCode}</b> · 담당자 PIN <b className="text-ink">1234</b> · 관리자 PIN{' '}
-            <b className="text-ink">9999</b>
-          </div>
-        </div>
       </div>
     </PageShell>
   );

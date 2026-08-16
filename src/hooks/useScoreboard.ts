@@ -471,7 +471,6 @@ export function useScoreboard(): { view: ScoreboardView; loading: boolean; error
       loginError: ui.loginError,
       codeInput: ui.codeInput,
       pinInput: ui.pinInput,
-      demoCode: s.teams[0]?.code || 'K7QX',
       onCodeInput, onPinInput, onCodeKey, onPinKey,
       submitTeamCode, submitPin, goStaff, toLogin, logout,
 
