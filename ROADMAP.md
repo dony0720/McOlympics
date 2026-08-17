@@ -36,6 +36,7 @@
 | 22  | ✅ 완료   | `feat: 동시 진행 라운드 방식에 맞게 대진표 재구성` `8dafc74` | `src/lib/scoring.ts`, `src/lib/scoring.test.ts`, `src/hooks/useScoreboard.ts`, `src/types/view.ts`, `src/pages/SchedulePage.tsx`, `src/pages/StatusPage.tsx`, `src/pages/manager/ManagerMatchesPage.tsx`, `src/data/initialState.ts`, `src/manager.test.tsx` |
 | 23  | ✅ 완료   | `fix: 로그인 화면에서 팀 코드·PIN 노출하던 데모 안내 제거` `85c40af` | `src/pages/LoginPage.tsx`, `src/types/view.ts`, `src/hooks/useScoreboard.ts`                                                |
 | 24  | ✅ 완료   | `fix: 로그인 입력창 플레이스홀더에서 실제 팀 코드 제거` `7be119e` | `src/pages/LoginPage.tsx`, `src/App.test.tsx`, `src/manager.test.tsx`                                                          |
+| 25  | ✅ 완료   | `feat: 대진표 페이지 하단 안내사항 제거` `85be30b`        | `src/pages/SchedulePage.tsx`                                                                                                                  |
 
 ## 커밋별 상세
 
@@ -146,6 +147,10 @@ git 저장소 초기화, 기존 Vite 스캐폴드 + 계획 문서 + `CLAUDE.md`�
 ### 24. 플레이스홀더 팀 코드 제거
 
 입력창 예시가 `예: K7QX`로, 1팀의 실제 코드였다. "영문/숫자 4자리"라는 형식 힌트는 남기되 어느 팀 코드와도 겹치지 않는 `예: ABCD`로 교체. 이로써 화면에 실제 팀 코드를 노출하는 곳은 없다(`initialState.ts`의 시드 값은 데이터 자체이므로 유지).
+
+### 25. 대진표 안내사항 제거
+
+대진표 페이지 하단의 안내사항 카드를 없애고 대진 카드만 남김. 여기 있던 "승리 20점 · 패배 10점" 문구도 함께 사라졌으므로, 승패 점수 규칙을 화면에 다시 노출하려면 별도로 자리를 잡아야 한다.
 
 ## 로드맵 갱신 규칙
 
