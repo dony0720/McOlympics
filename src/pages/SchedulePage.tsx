@@ -66,23 +66,6 @@ export function SchedulePage({ view }: PageProps) {
           </>
         )}
 
-        <div className="mt-4 rounded-2xl border border-line bg-white p-4">
-          <div className="mb-[10px] text-[13px] font-extrabold text-muted-2">안내사항</div>
-          <div className="flex flex-col gap-[9px]">
-            <div className="text-[13px] leading-[1.6] text-muted-2">
-              · <b className="text-muted-3">1부</b>는 몸으로 말해요를 전 팀이 다 같이 진행해요.
-            </div>
-            <div className="text-[13px] leading-[1.6] text-muted-2">
-              · <b className="text-muted-3">2부</b>는 실내(강당) 3개 종목을 동시에 열어요. 라운드마다 내 상대와 종목이 바뀌니 표를 확인하고 이동하세요.
-            </div>
-            <div className="text-[13px] leading-[1.6] text-muted-2">
-              · <b className="text-muted-3">3부</b>는 2부를 모두 마친 뒤 야외(운동장) 2개 종목을 동시에 열어요. 부스가 2개라 라운드마다 2팀은 쉬어요.
-            </div>
-            <div className="text-[13px] leading-[1.6] text-muted-2">
-              · 각 게임 <b className="text-brand">승리 20점 · 패배 10점</b>, 6개 게임 누적 점수와 아이템 보너스로 최종 순위가 결정돼요.
-            </div>
-          </div>
-        </div>
       </div>
     </PageShell>
   );
